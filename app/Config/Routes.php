@@ -18,6 +18,14 @@ $routes->group('admin', function ($routes) {
  
 
 
+    // CRUD Type Opération
+    $routes->get('types-operation', 'Admin\TypeOperationController::index');
+    $routes->get('types-operation/nouveau', 'Admin\TypeOperationController::nouveau');
+    $routes->post('types-operation/creer', 'Admin\TypeOperationController::creer');
+    $routes->get('types-operation/modifier/(:num)', 'Admin\TypeOperationController::modifier/$1');
+    $routes->post('types-operation/mettreAJour/(:num)', 'Admin\TypeOperationController::mettreAJour/$1');
+    $routes->get('types-operation/supprimer/(:num)', 'Admin\TypeOperationController::supprimer/$1');
+
     // CRUD Préfixe Opérateur
     $routes->get('prefixes', 'Admin\PrefixeController::index');
     $routes->get('prefixes/nouveau', 'Admin\PrefixeController::nouveau');

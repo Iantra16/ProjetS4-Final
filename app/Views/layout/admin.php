@@ -16,6 +16,7 @@
     <h5 class="mb-4">Admin</h5>
     <ul class="nav flex-column">
       <li class="nav-item"><a class="nav-link text-white" href="/admin/prefixes"><i class="bi bi-telephone"></i> Préfixes</a></li>
+      <li class="nav-item"><a class="nav-link text-white" href="/admin/types-operation"><i class="bi bi-arrow-left-right"></i> Types opération</a></li>
       <li class="nav-item"><a class="nav-link text-white" href="/admin/stats"><i class="bi bi-bar-chart"></i> Statistiques</a></li>
     </ul>
     <form method="POST" action="/logout" class="mt-4">
