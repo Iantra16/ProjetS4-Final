@@ -18,6 +18,11 @@
                 <input type="number" step="0.01" name="commission_exterieur" id="commission_exterieur" class="form-control" value="<?= isset($operateur) ? esc($operateur['commission_exterieur'] * 100) : '' ?>" required>
             </div>
 
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="est_notre_operateur" name="est_notre_operateur" value="1" <?= isset($operateur) && $operateur['est_notre_operateur'] ? 'checked' : '' ?>>
+                <label class="form-check-label" for="est_notre_operateur">Notre opérateur (interne)</label>
+            </div>
+
             <button type="submit" class="btn btn-primary"><?= isset($operateur) ? 'Mettre à jour' : 'Enregistrer' ?></button>
             <a href="/admin/operateurs" class="btn btn-secondary">Annuler</a>
         </form>
