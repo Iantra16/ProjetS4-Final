@@ -11,6 +11,7 @@ class V2Seeder extends Seeder
         // Nettoyage avant insertion
         $this->db->disableForeignKeyChecks();
         $this->db->table('operateur')->emptyTable();
+        $this->db->query("DELETE FROM sqlite_sequence WHERE name = 'operateur'");
         // Optionnel : $this->db->table('solde')->emptyTable(); // Attention : cela supprime les soldes V1
         $this->db->enableForeignKeyChecks();
 
@@ -21,19 +22,23 @@ class V2Seeder extends Seeder
             ['nom' => 'Orange', 'est_notre_operateur' => 0, 'commission_exterieur' => 0.02], // 2%
         ]);
 
-        // 2. Mettre à jour les prefixe_operateur avec id_operateur
-        // Selon MobileMoneySeeder:
-        // '033' (Airtel) -> id_operateur (Airtel) est 2
-        // '037' (Orange) -> id_operateur (Orange) est 3
-        // '034' (Telma)  -> id_operateur (Telma) est 1
-        // Let's verify IDs: 1: Telma, 2: Airtel, 3: Orange?
-        // Wait, insertBatch in SQLite will assign IDs based on insert order: 1, 2, 3.
-        // So:
-        // ID 1: Telma
-        // ID 2: Airtel
-        // ID 3: Orange
+        // 2. Créer/lier les prefixe_operateur avec id_operateur
+        // insertBatch ci-dessus assigne les IDs dans l'ordre : 1 = Telma, 2 = Airtel, 3 = Orange
+        // '033' -> Airtel (2), '037' -> Orange (3), '034' -> Telma (1)
+        $prefixes = [
+            '033' => 2,
+            '037' => 3,
+            '034' => 1,
+        ];
+        foreach ($prefixes as $prefixe => $idOperateur) {
+            if (!$this->db->table('prefixe_operateur')->where('prefixe', $prefixe)->countAllResults()) {
+                $this->db->table('prefixe_operateur')->insert(['prefixe' => $prefixe]);
+            }
+            $this->db->table('prefixe_operateur')
+                ->where('prefixe', $prefixe)
+                ->update(['id_operateur' => $idOperateur]);
+        }
 
-        // Re-mapping based on ID 1=Telma, 2=Airtel, 3=Orange:
         // 3. Ajouter des fonds aux comptes de test pour V2
         // id 1: 0331234567, id 2: 0339876543, id 3: 0371112233, id 4: 0374445566, id 5: 0347778899
         $this->db->table('solde')->insertBatch([

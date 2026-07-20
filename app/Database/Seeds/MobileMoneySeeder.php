@@ -10,20 +10,20 @@ class MobileMoneySeeder extends Seeder
     {
         // Nettoyage avant insertion - ordre inverse des dépendances pour respecter les FK
         $this->db->disableForeignKeyChecks();
-        $this->db->table('operation')->emptyTable();
-        $this->db->table('solde')->emptyTable();
-        $this->db->table('numero_telephone')->emptyTable();
-        $this->db->table('tranches_frais')->emptyTable();
-        $this->db->table('type_operation')->emptyTable();
-        $this->db->table('prefixe_operateur')->emptyTable();
-        // Ne pas vider operateur ici, c'est le rôle de V2Seeder ou une autre logique
+        $tables = ['operation', 'solde', 'numero_telephone', 'tranches_frais', 'type_operation', 'prefixe_operateur'];
+        foreach ($tables as $t) {
+            $this->db->table($t)->emptyTable();
+            // SQLite : emptyTable (DELETE) ne remet pas à 0 l'autoincrement, on le force
+            $this->db->query("DELETE FROM sqlite_sequence WHERE name = '$t'");
+        }
+        // Ne pas vider operateur ici, c'est le rôle de V2Seeder
         $this->db->enableForeignKeyChecks();
 
-        // prefixe_operateur
+        // prefixe_operateur (la liaison id_operateur est faite par V2Seeder)
         $this->db->table('prefixe_operateur')->insertBatch([
-            ['prefixe' => '033', 'nom' => 'Airtel Money'],
-            ['prefixe' => '037', 'nom' => 'Orange Money'],
-            ['prefixe' => '034', 'nom' => 'Telma Mvola'],
+            ['prefixe' => '033'],
+            ['prefixe' => '037'],
+            ['prefixe' => '034'],
         ]);
 
         // type_operation
