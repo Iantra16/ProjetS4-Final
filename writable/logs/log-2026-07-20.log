@@ -1677,3 +1677,82 @@ DEBUG - 2026-07-20 19:30:00 --> Session: Class initialized using 'CodeIgniter\Se
 DEBUG - 2026-07-20 19:30:00 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
 DEBUG - 2026-07-20 19:30:09 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
 DEBUG - 2026-07-20 19:30:13 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-07-20 19:33:12 --> CodeIgniter\Cache\Exceptions\CacheException: Cache unable to write to "/home/iantra/Documents/My_Docs/S4/SI/ProjetS4-Final/writable/cache/".
+[Method: GET, Route: client/solde]
+in SYSTEMPATH/Cache/Handlers/FileHandler.php on line 66.
+ 1 SYSTEMPATH/Cache/Handlers/FileHandler.php(66): CodeIgniter\Cache\Exceptions\CacheException::forUnableToWrite()
+ 2 SYSTEMPATH/Cache/CacheFactory.php(67): CodeIgniter\Cache\Handlers\FileHandler->__construct()
+ 3 SYSTEMPATH/Config/Services.php(129): CodeIgniter\Cache\CacheFactory::getHandler()
+ 4 SYSTEMPATH/Config/BaseService.php(325): CodeIgniter\Config\Services::cache()
+ 5 SYSTEMPATH/Config/BaseService.php(264): CodeIgniter\Config\BaseService::__callStatic()
+ 6 SYSTEMPATH/Config/Services.php(124): CodeIgniter\Config\BaseService::getSharedInstance()
+ 7 SYSTEMPATH/Config/BaseService.php(334): CodeIgniter\Config\Services::cache()
+ 8 SYSTEMPATH/Config/BaseService.php(203): CodeIgniter\Config\BaseService::__callStatic()
+ 9 SYSTEMPATH/Config/Services.php(454): CodeIgniter\Config\BaseService::get()
+10 SYSTEMPATH/Config/BaseService.php(325): CodeIgniter\Config\Services::responsecache()
+11 SYSTEMPATH/Config/BaseService.php(264): CodeIgniter\Config\BaseService::__callStatic()
+12 SYSTEMPATH/Config/Services.php(450): CodeIgniter\Config\BaseService::getSharedInstance()
+13 SYSTEMPATH/Config/BaseService.php(334): CodeIgniter\Config\Services::responsecache()
+14 SYSTEMPATH/CodeIgniter.php(178): CodeIgniter\Config\BaseService::__callStatic()
+15 SYSTEMPATH/Config/Services.php(164): CodeIgniter\CodeIgniter->__construct()
+16 SYSTEMPATH/Config/BaseService.php(325): CodeIgniter\Config\Services::codeigniter()
+17 SYSTEMPATH/Config/BaseService.php(264): CodeIgniter\Config\BaseService::__callStatic()
+18 SYSTEMPATH/Config/Services.php(159): CodeIgniter\Config\BaseService::getSharedInstance()
+19 SYSTEMPATH/Config/BaseService.php(334): CodeIgniter\Config\Services::codeigniter()
+20 SYSTEMPATH/Config/BaseService.php(203): CodeIgniter\Config\BaseService::__callStatic()
+21 SYSTEMPATH/Common.php(1078): CodeIgniter\Config\BaseService::get()
+22 SYSTEMPATH/Boot.php(403): service()
+23 SYSTEMPATH/Boot.php(67): CodeIgniter\Boot::initializeCodeIgniter()
+24 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+25 SYSTEMPATH/rewrite.php(44): require_once('/home/iantra/Documents/My_Docs/S4/SI/ProjetS4-Final/public/index.php')
+CRITICAL - 2026-07-20 19:33:56 --> CodeIgniter\Cache\Exceptions\CacheException: Cache unable to write to "/home/iantra/Documents/My_Docs/S4/SI/ProjetS4-Final/writable/cache/".
+[Method: GET, Route: /]
+in SYSTEMPATH/Cache/Handlers/FileHandler.php on line 66.
+ 1 SYSTEMPATH/Cache/Handlers/FileHandler.php(66): CodeIgniter\Cache\Exceptions\CacheException::forUnableToWrite()
+ 2 SYSTEMPATH/Cache/CacheFactory.php(67): CodeIgniter\Cache\Handlers\FileHandler->__construct()
+ 3 SYSTEMPATH/Config/Services.php(129): CodeIgniter\Cache\CacheFactory::getHandler()
+ 4 SYSTEMPATH/Config/BaseService.php(325): CodeIgniter\Config\Services::cache()
+ 5 SYSTEMPATH/Config/BaseService.php(264): CodeIgniter\Config\BaseService::__callStatic()
+ 6 SYSTEMPATH/Config/Services.php(124): CodeIgniter\Config\BaseService::getSharedInstance()
+ 7 SYSTEMPATH/Config/BaseService.php(334): CodeIgniter\Config\Services::cache()
+ 8 SYSTEMPATH/Config/BaseService.php(203): CodeIgniter\Config\BaseService::__callStatic()
+ 9 SYSTEMPATH/Config/Services.php(454): CodeIgniter\Config\BaseService::get()
+10 SYSTEMPATH/Config/BaseService.php(325): CodeIgniter\Config\Services::responsecache()
+11 SYSTEMPATH/Config/BaseService.php(264): CodeIgniter\Config\BaseService::__callStatic()
+12 SYSTEMPATH/Config/Services.php(450): CodeIgniter\Config\BaseService::getSharedInstance()
+13 SYSTEMPATH/Config/BaseService.php(334): CodeIgniter\Config\Services::responsecache()
+14 SYSTEMPATH/CodeIgniter.php(178): CodeIgniter\Config\BaseService::__callStatic()
+15 SYSTEMPATH/Config/Services.php(164): CodeIgniter\CodeIgniter->__construct()
+16 SYSTEMPATH/Config/BaseService.php(325): CodeIgniter\Config\Services::codeigniter()
+17 SYSTEMPATH/Config/BaseService.php(264): CodeIgniter\Config\BaseService::__callStatic()
+18 SYSTEMPATH/Config/Services.php(159): CodeIgniter\Config\BaseService::getSharedInstance()
+19 SYSTEMPATH/Config/BaseService.php(334): CodeIgniter\Config\Services::codeigniter()
+20 SYSTEMPATH/Config/BaseService.php(203): CodeIgniter\Config\BaseService::__callStatic()
+21 SYSTEMPATH/Common.php(1078): CodeIgniter\Config\BaseService::get()
+22 SYSTEMPATH/Boot.php(403): service()
+23 SYSTEMPATH/Boot.php(163): CodeIgniter\Boot::initializeCodeIgniter()
+24 ROOTPATH/spark(87): CodeIgniter\Boot::bootSpark()
+DEBUG - 2026-07-20 19:35:26 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 19:35:26 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2026-07-20 19:35:30 --> CSRF token verified.
+DEBUG - 2026-07-20 19:35:30 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 19:35:30 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 19:35:33 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 19:35:35 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 19:35:37 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 19:35:38 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 19:35:39 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 19:35:40 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 19:35:41 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 19:35:43 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 19:35:44 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 19:35:47 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 19:35:48 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 19:35:49 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 19:35:50 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 19:35:51 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 19:35:54 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 19:35:58 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2026-07-20 19:36:04 --> CSRF token verified.
+DEBUG - 2026-07-20 19:36:04 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 19:36:06 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
