@@ -115,6 +115,9 @@ function chargerTranches(typeNom) {
             tranchesCache[type.id] = data;
             afficherTranches(data);
             calculerFrais();
+        })
+        .catch(() => {
+            alert('Impossible de charger le barème des frais. Réessayez.');
         });
 }
 
@@ -152,13 +155,44 @@ function calculerFrais() {
 document.getElementById('numero_dest').addEventListener('blur', function() {
     const numero = this.value.trim();
     const erreur = document.getElementById('erreurNumero');
-    if (numero.length === 0) { erreur.style.display = 'none'; return; }
+    const champ = this;
+
+    // Champ vide : pas d'erreur, mais bouton bloqué (pas de destinataire saisi)
+    if (numero.length === 0) {
+        erreur.style.display = 'none';
+        champ.classList.remove('is-invalid');
+        document.getElementById('btnValider').disabled = true;
+        return;
+    }
+
+    // Format invalide (pas 10 chiffres) : inutile d'appeler le serveur
+    if (!/^\d{10}$/.test(numero)) {
+        erreur.textContent = 'Le numéro doit contenir exactement 10 chiffres.';
+        erreur.style.display = 'block';
+        champ.classList.add('is-invalid');
+        document.getElementById('btnValider').disabled = true;
+        return;
+    }
 
     fetch('/client/numero-existe-json?numero=' + encodeURIComponent(numero))
         .then(r => r.json())
         .then(data => {
-            erreur.style.display = data.existe ? 'none' : 'block';
-            document.getElementById('btnValider').disabled = !data.existe;
+            if (data.existe) {
+                erreur.style.display = 'none';
+                champ.classList.remove('is-invalid');
+                document.getElementById('btnValider').disabled = false;
+            } else {
+                erreur.textContent = 'Ce numéro n\'existe pas.';
+                erreur.style.display = 'block';
+                champ.classList.add('is-invalid');
+                document.getElementById('btnValider').disabled = true;
+            }
+        })
+        .catch(() => {
+            erreur.textContent = 'Vérification impossible, réessayez.';
+            erreur.style.display = 'block';
+            champ.classList.add('is-invalid');
+            document.getElementById('btnValider').disabled = true;
         });
 });
 
