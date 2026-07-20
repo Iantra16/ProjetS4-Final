@@ -3,38 +3,38 @@
 
 ## V1
 ### base - 1h
-    - table prefixe_operateur
-        - id
-        - prefixe
-        - nom
-    - table numero_telephone
-        - id
-        - id_prefixe
-        - numero (10)
-        - date_creation
-    - table solde
-        - id
-        - id_numero_tel
-        - montant
-        - date
-    - table type_operation
-        - id
-        - nom
-    - table tranches_frais
-        - id
-        - id_type_operation
-        - montant_min
-        - montant_max
-        - montant_frais
-        - date
-    - table operation
-        - id
-        - id_type_operation
-        - id_numero_tel
-        - id_numero_tel_dest
-        - montant
-        - frais
-        - date
+- table prefixe_operateur
+    - id
+    - prefixe
+    - nom
+- table numero_telephone
+    - id
+    - id_prefixe
+    - numero (10)
+    - date_creation
+- table solde
+    - id
+    - id_numero_tel
+    - montant
+    - date
+- table type_operation
+    - id
+    - nom
+- table tranches_frais
+    - id
+    - id_type_operation
+    - montant_min
+    - montant_max
+    - montant_frais
+    - date
+- table operation
+    - id
+    - id_type_operation
+    - id_numero_tel
+    - id_numero_tel_dest
+    - montant
+    - frais
+    - date
 
 ### etape 1
 1. modifier le config/database.php sur le projetfinal.db avec le nom de la base
@@ -99,3 +99,38 @@ php spark db:seed MobileMoneySeeder
 
 4. voir historique
     + filtre , recherche & tri
+
+---------------------------------------------------
+
+## V2
+### base
+- ajouter une table operateur
+    - id
+    - nom
+    - est_notre_operateur
+    - commission_exterieur
+- modifie la table prefixe_operateur
+    - id
+    - id_operateur
+    - prefixe
+
+### fonctionnalite
+#### Operateur
+1. config prefixes pour les autres operateurs
+
+2. config commission vers les autres operateurs
+- notre operateur : frais de transfert
+- autre operateur : montant a transferer + commission
+
+3. dans situation gain via les differents frais, separe operateur et autre operateur
+
+4. situation montant a envoyer a chaque operateur
+
+### Client
+1. option inclure frais de retrait lors de l'envoie
+    + pas de frais de retrait pour les autres operateurs
+
+2. envoi multiple vers plusieurs numéros ( divisé le montant pour chaque numéro)
+    même opérateur uniquement
+
+
