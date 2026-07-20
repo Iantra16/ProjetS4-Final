@@ -8,7 +8,7 @@
       <div class="card-body p-4">
         <h3 class="mb-3"><i class="bi bi-arrow-left-right text-primary"></i> Effectuer une opération</h3>
 
-        <p class="text-muted">Solde actuel : <strong><?= number_format($solde['montant'] ?? 0, 0, ',', ' ') ?> F</strong></p>
+        <p class="text-muted">Solde actuel : <strong><?= number_format($solde['montant'] ?? 0, 0, ',', ' ') ?> Ar</strong></p>
 
         <form method="POST" action="/client/operation" id="formOperation">
           <?= csrf_field() ?>
@@ -48,8 +48,8 @@
 
           <div class="mb-3" id="zoneFrais" style="display:none;">
             <div class="alert alert-info mb-0">
-              <strong>Frais :</strong> <span id="affichageFrais">0</span> F<br>
-              <strong>Total débité :</strong> <span id="affichageTotal">0</span> F
+              <strong>Frais :</strong> <span id="affichageFrais">0</span> Ar<br>
+              <strong>Total débité :</strong> <span id="affichageTotal">0</span> Ar
             </div>
           </div>
 

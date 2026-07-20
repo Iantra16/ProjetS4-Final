@@ -75,8 +75,8 @@
                   ?>
                   <span class="badge <?= $badgeClass ?>"><?= ucfirst(esc($op['type_nom'])) ?></span>
                 </td>
-                <td><?= number_format($op['montant'], 0, ',', ' ') ?> F</td>
-                <td><?= number_format($op['frais'], 0, ',', ' ') ?> F</td>
+                <td><?= number_format($op['montant'], 0, ',', ' ') ?> Ar</td>
+                <td><?= number_format($op['frais'], 0, ',', ' ') ?> Ar</td>
                 <td>
                   <?php if ($op['type_nom'] === 'depot'): ?>
                     Dépôt sur votre compte

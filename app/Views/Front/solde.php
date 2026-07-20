@@ -24,7 +24,7 @@
         </form>
 
         <div class="display-4 fw-bold text-success my-4">
-          <?= number_format($solde['montant'] ?? 0, 2, ',', ' ') ?> F
+          <?= number_format($solde['montant'] ?? 0, 2, ',', ' ') ?> Ar
         </div>
 
         <p class="text-muted small">
