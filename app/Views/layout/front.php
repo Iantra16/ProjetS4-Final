@@ -25,7 +25,7 @@
             <button class="btn btn-outline-danger btn-sm">Déconnexion</button>
           </form>
         <?php else: ?>
-          <a href="/contact" class="btn btn-outline-light btn-sm me-2">Contact</a>
+          <a href="/admin/tranches" class="btn btn-outline-light btn-sm me-2">Admin</a>
           <a href="/client/login" class="btn btn-outline-light btn-sm">Connexion client</a>
         <?php endif; ?>
       </div>
