@@ -68,4 +68,5 @@ $routes->group('client', ['filter' => 'client'], function($routes) {
     $routes->get('historique', 'Front\OperationController::historique');
     $routes->get('tranches-json', 'Front\OperationController::tranchesJson');
     $routes->get('numero-existe-json', 'Front\OperationController::numeroExisteJson');
+    $routes->get('operateur-du-numero-json', 'Front\OperationController::operateurDuNumeroJson');
 });
