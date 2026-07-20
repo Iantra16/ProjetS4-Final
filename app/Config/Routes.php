@@ -14,18 +14,15 @@ $routes->post('login', 'Auth::login');
 $routes->post('logout', 'Auth::logout', ['filter' => 'auth']);
 $routes->get('unauthorized', static fn() => view('errors/unauthorized'));
 
-$routes->group('admin', ['filter' => 'auth:admin'], function ($routes) {
-    $routes->get('dashboard', static fn() => 'Dashboard admin (à faire plus tard)');
+$routes->group('admin', function ($routes) {
+ 
 
-    $routes->get('entites', 'Admin\Entites::index');
-    $routes->get('entites/new', 'Admin\Entites::new');
-    $routes->post('entites/create', 'Admin\Entites::create');
-    $routes->get('entites/edit/(:num)', 'Admin\Entites::edit/$1');
-    $routes->post('entites/update/(:num)', 'Admin\Entites::update/$1');
-    $routes->get('entites/delete/(:num)', 'Admin\Entites::delete/$1');
-    $routes->get('entites/export/pdf', 'Admin\Entites::exportPdf');
-    $routes->get('entites/export/excel', 'Admin\Entites::exportExcel');
-    $routes->get('entites/import', 'Admin\Entites::importForm');
-    $routes->post('entites/import', 'Admin\Entites::import');
-    $routes->get('stats', 'Admin\Stats::index');
+
+    // CRUD Préfixe Opérateur
+    $routes->get('prefixes', 'Admin\PrefixeController::index');
+    $routes->get('prefixes/nouveau', 'Admin\PrefixeController::nouveau');
+    $routes->post('prefixes/creer', 'Admin\PrefixeController::creer');
+    $routes->get('prefixes/modifier/(:num)', 'Admin\PrefixeController::modifier/$1');
+    $routes->post('prefixes/mettreAJour/(:num)', 'Admin\PrefixeController::mettreAJour/$1');
+    $routes->get('prefixes/supprimer/(:num)', 'Admin\PrefixeController::supprimer/$1');
 });
