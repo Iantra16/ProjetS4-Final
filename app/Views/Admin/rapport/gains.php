@@ -24,20 +24,26 @@
 <table class="table table-bordered table-striped">
     <thead class="table-dark">
         <tr>
-            <th>Type d'opération</th>
-            <th>Nombre d'opérations</th>
+            <th>Opérateur</th>
+            <th>Type</th>
             <th>Total frais</th>
+            <th>Total commission</th>
         </tr>
     </thead>
     <tbody>
         <?php if (empty($gains)): ?>
-            <tr><td colspan="3" class="text-center">Aucune donnée.</td></tr>
+            <tr><td colspan="4" class="text-center">Aucune donnée.</td></tr>
         <?php else: ?>
             <?php foreach ($gains as $g): ?>
                 <tr>
                     <td><?= esc(ucfirst($g['nom'])) ?></td>
-                    <td><?= $g['nb_operations'] ?></td>
+                    <td>
+                        <span class="badge bg-<?= $g['est_notre_operateur'] ? 'success' : 'warning' ?>">
+                            <?= $g['est_notre_operateur'] ? 'Interne' : 'Externe' ?>
+                        </span>
+                    </td>
                     <td><?= number_format($g['total_frais'], 0, ',', ' ') ?> Ar</td>
+                    <td><?= number_format($g['total_commission'], 0, ',', ' ') ?> Ar</td>
                 </tr>
             <?php endforeach; ?>
         <?php endif; ?>
@@ -46,7 +52,8 @@
     <tfoot>
         <tr class="table-dark">
             <th colspan="2">Total général</th>
-            <th><?= number_format($totalGains, 0, ',', ' ') ?> Ar</th>
+            <th><?= number_format(array_sum(array_column($gains, 'total_frais')), 0, ',', ' ') ?> Ar</th>
+            <th><?= number_format(array_sum(array_column($gains, 'total_commission')), 0, ',', ' ') ?> Ar</th>
         </tr>
     </tfoot>
     <?php endif; ?>
@@ -62,7 +69,7 @@
                     <option value="<?= $y ?>" <?= $y == date('Y') ? 'selected' : '' ?>><?= $y ?></option>
                 <?php endfor; ?>
             </select>
-            <button class="btn btn-sm btn-primary" onclick="chargerGraphique()"><i class="bi bi-arrow-repeat"></i></button>
+            <button class="btn btn-sm btn-primary" onclick="chargerGraphique()">Filtrer</button>
         </div>
     </div>
     <div class="card-body">
@@ -70,7 +77,7 @@
     </div>
 </div>
 
-<script src="/assets/vendor/chartjs/chart.min.js"></script>
+<script src="/assets/vendor/chartjs/chart.umd.min.js"></script>
 <script>
 let chart = null;
 

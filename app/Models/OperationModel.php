@@ -12,11 +12,11 @@ class OperationModel extends Model
     public function gainsParOperateur(): array
     {
         return $this->db->table('operation o')
-            ->select('op.nom, SUM(o.frais) as total_frais, SUM(o.commission) as total_commission')
+            ->select('op.nom, op.est_notre_operateur, SUM(o.frais) as total_frais, SUM(o.commission) as total_commission')
             ->join('numero_telephone nt', 'nt.id = o.id_numero_tel')
             ->join('prefixe_operateur po', 'po.id = nt.id_prefixe')
             ->join('operateur op', 'op.id = po.id_operateur')
-            ->groupBy('op.nom')
+            ->groupBy('op.nom, op.est_notre_operateur')
             ->get()->getResultArray();
     }
 
@@ -33,13 +33,16 @@ class OperationModel extends Model
     }
 
 
-    public function gainsParType(): array
+    public function gainsParPeriodeParOperateur(?string $debut = null, ?string $fin = null): array
     {
-        return $this->db->table('operation')
-            ->select('type_operation.nom, SUM(operation.frais) as total_frais, COUNT(*) as nb_operations')
-            ->join('type_operation', 'type_operation.id = operation.id_type_operation')
-            ->groupBy('type_operation.nom')
-            ->get()->getResultArray();
+        $builder = $this->db->table('operation o')
+            ->select('op.nom, op.est_notre_operateur, SUM(o.frais) as total_frais, SUM(o.commission) as total_commission')
+            ->join('numero_telephone nt', 'nt.id = o.id_numero_tel')
+            ->join('prefixe_operateur po', 'po.id = nt.id_prefixe')
+            ->join('operateur op', 'op.id = po.id_operateur');
+        if ($debut) $builder->where('o.date >=', $debut);
+        if ($fin)   $builder->where('o.date <=', $fin . ' 23:59:59');
+        return $builder->groupBy('op.nom, op.est_notre_operateur')->get()->getResultArray();
     }
 
     public function gainsParPeriode(?string $debut = null, ?string $fin = null): array

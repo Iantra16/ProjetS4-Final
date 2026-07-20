@@ -21,6 +21,7 @@
       <li class="nav-item"><a class="nav-link text-white" href="/admin/tranches">Tranches frais</a></li>
       <li class="nav-item"><a class="nav-link text-white" href="/admin/comptes"> Comptes clients</a></li>
       <li class="nav-item"><a class="nav-link text-white" href="/admin/rapport/gains">Gains</a></li>
+      <li class="nav-item"><a class="nav-link text-white" href="/admin/rapport/montants-a-envoyer">Montants à envoyer</a></li>
     </ul>
     <form method="POST" action="/logout" class="mt-4">
       <?= csrf_field() ?>

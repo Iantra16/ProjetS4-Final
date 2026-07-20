@@ -58,6 +58,7 @@ $routes->group('admin', function ($routes) {
 
     // Rapport gains
     $routes->get('rapport/gains', 'Admin\RapportController::gains');
+    $routes->get('rapport/montants-a-envoyer', 'Admin\RapportController::montantsAEnvoyer');
 });
 
 $routes->group('client', ['filter' => 'client'], function($routes) {
