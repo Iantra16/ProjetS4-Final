@@ -119,6 +119,10 @@ class OperationController extends BaseController
                     $db->transRollback();
                     return redirect()->back()->withInput()->with('error', 'Veuillez saisir le numéro du destinataire.');
                 }
+                if ($numeroDest === session()->get('numero')) {
+                    $db->transRollback();
+                    return redirect()->back()->withInput()->with('error', 'Vous ne pouvez pas vous envoyer de l\'argent.');
+                }
                 $destinataire = $numeroModel->trouverParNumero($numeroDest);
                 if (!$destinataire) {
                     $db->transRollback();
@@ -198,12 +202,18 @@ class OperationController extends BaseController
         $model = new OperationModel();
 
         $type       = $this->request->getGet('type') ?: null;
-        $montantMin = $this->request->getGet('montant_min') !== '' ? (float) $this->request->getGet('montant_min') : null;
-        $montantMax = $this->request->getGet('montant_max') !== '' ? (float) $this->request->getGet('montant_max') : null;
+        $montantMin = $this->request->getGet('montant_min') !== null && $this->request->getGet('montant_min') !== '' ? (float) $this->request->getGet('montant_min') : null;
+        $montantMax = $this->request->getGet('montant_max') !== null && $this->request->getGet('montant_max') !== '' ? (float) $this->request->getGet('montant_max') : null;
         $dateDebut  = $this->request->getGet('date_debut') ?: null;
         $dateFin    = $this->request->getGet('date_fin') ?: null;
 
-        $data['operations'] = $model->historiqueFiltre($idNumero, $type, $montantMin, $montantMax, $dateDebut, $dateFin);
+        // Si aucun filtre n'est appliqué, on affiche tout l'historique
+        if (!$type && $montantMin === null && $montantMax === null && !$dateDebut && !$dateFin) {
+            $data['operations'] = $model->historiquePourNumero($idNumero);
+        } else {
+            $data['operations'] = $model->historiqueFiltre($idNumero, $type, $montantMin, $montantMax, $dateDebut, $dateFin);
+        }
+
         $data['monId']      = $idNumero;
         $data['types']      = (new TypeOperationModel())->findAll();
         $data['filters']    = [
