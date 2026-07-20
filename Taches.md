@@ -162,7 +162,9 @@ php spark db:seed MobileMoneySeeder
 
 ## 4. Logique de transfert
 - [ ] `OperationController::enregistrer()` bloc `transfert` : résoudre l'opérateur du destinataire, brancher interne (comportement V1 inchangé) vs externe (frais gardés + `commission` calculée et stockée)
-- [ ] Décider/documenter dans `Taches.md` le mode de calcul de `commission_exterieur` (% ou montant fixe)
+- [x] Décider/documenter dans `Taches.md` le mode de calcul de `commission_exterieur` (% ou montant fixe)
+    - **Décision :** La commission extérieure est calculée en **pourcentage** du montant transféré.
+    - **Décision :** En cas d'envoi multiple, le montant total est divisé par le nombre de destinataires. Chaque sous-transfert est considéré comme une opération individuelle, avec ses propres frais et commission calculés sur son montant spécifique.
 
 ## 5. Rapports
 - [ ] `RapportController::gains()` scindé interne/externe

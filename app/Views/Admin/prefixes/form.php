@@ -19,6 +19,17 @@
                        value="<?= esc(old('nom', $prefixe['nom'] ?? '')) ?>" required>
             </div>
 
+            <div class="mb-3">
+                <label for="id_operateur" class="form-label">Opérateur</label>
+                <select class="form-control" id="id_operateur" name="id_operateur" required>
+                    <?php foreach ($operateurs as $op): ?>
+                        <option value="<?= $op['id'] ?>" <?= (isset($prefixe) && $prefixe['id_operateur'] == $op['id']) ? 'selected' : '' ?>>
+                            <?= $op['nom'] ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
             <button type="submit" class="btn btn-primary"><?= isset($prefixe) ? 'Modifier' : 'Ajouter' ?></button>
             <a href="/admin/prefixes" class="btn btn-secondary">Annuler</a>
         </form>

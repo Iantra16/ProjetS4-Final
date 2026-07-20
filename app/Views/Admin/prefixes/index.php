@@ -26,17 +26,19 @@
         <tr>
             <th>Préfixe</th>
             <th>Nom</th>
+            <th>Opérateur</th>
             <th>Actions</th>
         </tr>
     </thead>
     <tbody>
         <?php if (empty($prefixes)): ?>
-            <tr><td colspan="3" class="text-center">Aucun préfixe trouvé.</td></tr>
+            <tr><td colspan="4" class="text-center">Aucun préfixe trouvé.</td></tr>
         <?php else: ?>
             <?php foreach ($prefixes as $p): ?>
                 <tr>
                     <td><?= esc($p['prefixe']) ?></td>
                     <td><?= esc($p['nom']) ?></td>
+                    <td><?= esc($p['operateur_nom'] ?? 'Non défini') ?></td>
                     <td>
                         <a href="/admin/prefixes/modifier/<?= $p['id'] ?>" class="btn btn-sm btn-warning">Modifier</a>
                         <a href="/admin/prefixes/supprimer/<?= $p['id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('Supprimer ce préfixe ?')">Supprimer</a>

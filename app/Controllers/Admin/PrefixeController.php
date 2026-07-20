@@ -4,6 +4,7 @@ namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
 use App\Models\PrefixeOperateurModel;
+use App\Models\OperateurModel;
 
 class PrefixeController extends BaseController
 {
@@ -12,14 +13,17 @@ class PrefixeController extends BaseController
         $model = new PrefixeOperateurModel();
         $recherche = $this->request->getGet('q') ?: null;
 
-        $builder = $model->builder();
+        $builder = $model->builder()
+            ->select('prefixe_operateur.*, operateur.nom as operateur_nom')
+            ->join('operateur', 'operateur.id = prefixe_operateur.id_operateur', 'left');
+
         if ($recherche) {
             $builder->groupStart()
                 ->like('prefixe', $recherche)
-                ->orLike('nom', $recherche)
+                ->orLike('prefixe_operateur.nom', $recherche)
             ->groupEnd();
         }
-        $data['prefixes'] = $builder->orderBy('id', 'ASC')->get()->getResultArray();
+        $data['prefixes'] = $builder->orderBy('prefixe_operateur.id', 'ASC')->get()->getResultArray();
         $data['recherche'] = $recherche;
         $data['title'] = 'Gestion des préfixes';
         return view('Admin/prefixes/index', $data);
@@ -28,12 +32,14 @@ class PrefixeController extends BaseController
     public function nouveau()
     {
         $data['title'] = 'Ajouter un préfixe';
+        $data['operateurs'] = (new OperateurModel())->findAll();
         return view('Admin/prefixes/form', $data);
     }
 
     public function creer()
     {
         $model = new PrefixeOperateurModel();
+        // Modification temporaire pour validation, inclure id_operateur
         if (!$this->validate($model->validationRules)) {
             return redirect()->back()->withInput()->with('error', 'Veuillez corriger les erreurs.');
         }
@@ -45,6 +51,7 @@ class PrefixeController extends BaseController
     {
         $model = new PrefixeOperateurModel();
         $data['prefixe'] = $model->find($id);
+        $data['operateurs'] = (new OperateurModel())->findAll();
         $data['title'] = 'Modifier le préfixe';
         return view('Admin/prefixes/form', $data);
     }
