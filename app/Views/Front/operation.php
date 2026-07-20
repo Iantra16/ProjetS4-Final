@@ -98,7 +98,7 @@ document.getElementById('type_operation').addEventListener('change', function() 
     btnAjouter.style.display = (type === 'transfert_multiple') ? 'block' : 'none';
     zoneFrais.style.display = (type !== 'depot' && type !== '') ? 'block' : 'none';
     zoneBareme.style.display = (type !== 'depot' && type !== '') ? 'block' : 'none';
-    zoneInclureFrais.style.display = (type === 'transfert') ? 'block' : 'none';
+    zoneInclureFrais.style.display = (type === 'transfert' || type === 'transfert_multiple') ? 'block' : 'none';
 
     // Activer/désactiver le bouton selon le type
     document.getElementById('btnValider').disabled = (type === '');
@@ -164,14 +164,14 @@ document.getElementById('montant').addEventListener('input', calculerFrais);
 
 function calculerFrais() {
     const type = document.getElementById('type_operation').value;
-    if (type === 'depot' || !type || type === 'transfert_multiple') {
+    if (type === 'depot' || !type) {
         document.getElementById('affichageFrais').textContent = '0';
         document.getElementById('affichageTotal').textContent = document.getElementById('montant').value || '0';
         return;
     }
 
     const montant = parseFloat(document.getElementById('montant').value) || 0;
-    const typeObj = typesData.find(t => t.nom === type);
+    const typeObj = typesData.find(t => t.nom === (type === 'transfert_multiple' ? 'transfert' : type));
     if (!typeObj || !tranchesCache[typeObj.id]) return;
 
     const tranche = tranchesCache[typeObj.id].find(t => montant >= t.montant_min && montant <= t.montant_max);
