@@ -11,7 +11,17 @@ class TrancheFraisController extends BaseController
     public function index()
     {
         $model = new TranchesFraisModel();
-        $data['tranches'] = $model->toutesTriees();
+        $idType = $this->request->getGet('type') ?: null;
+
+        $builder = $model->db->table('tranches_frais tf')
+            ->select('tf.*, t.nom as type_nom')
+            ->join('type_operation t', 't.id = tf.id_type_operation');
+        if ($idType) {
+            $builder->where('tf.id_type_operation', $idType);
+        }
+        $data['tranches'] = $builder->orderBy('tf.id_type_operation', 'ASC')->orderBy('tf.montant_min', 'ASC')->get()->getResultArray();
+        $data['types'] = (new TypeOperationModel())->findAll();
+        $data['typeFiltre'] = $idType;
         $data['title'] = 'Tranches de frais';
         return view('Admin/tranches/index', $data);
     }

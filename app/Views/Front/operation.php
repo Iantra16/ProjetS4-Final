@@ -79,6 +79,15 @@ document.getElementById('type_operation').addEventListener('change', function() 
     zoneFrais.style.display = (type !== 'depot' && type !== '') ? 'block' : 'none';
     zoneBareme.style.display = (type !== 'depot' && type !== '') ? 'block' : 'none';
 
+    // Activer/désactiver le bouton selon le type
+    if (type === 'depot' || type === 'retrait') {
+        document.getElementById('btnValider').disabled = false;
+    } else if (type === 'transfert') {
+        document.getElementById('btnValider').disabled = true;
+    } else {
+        document.getElementById('btnValider').disabled = true;
+    }
+
     if (type === 'depot' || type === '') {
         document.getElementById('affichageFrais').textContent = '0';
         document.getElementById('affichageTotal').textContent = document.getElementById('montant').value || '0';

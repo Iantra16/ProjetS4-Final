@@ -2,6 +2,20 @@
 
 <?= $this->section('content') ?>
 
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="GET" action="/admin/comptes" class="row g-2 align-items-end">
+            <div class="col-md-4">
+                <input type="text" class="form-control form-control-sm" name="q" placeholder="Rechercher par numéro ou opérateur..." value="<?= esc($recherche ?? '') ?>">
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search"></i> Filtrer</button>
+                <a href="/admin/comptes" class="btn btn-secondary btn-sm">Réinitialiser</a>
+            </div>
+        </form>
+    </div>
+</div>
+
 <table class="table table-bordered table-striped">
     <thead class="table-dark">
         <tr>
@@ -14,7 +28,7 @@
     </thead>
     <tbody>
         <?php if (empty($comptes)): ?>
-            <tr><td colspan="6" class="text-center">Aucun compte trouvé.</td></tr>
+            <tr><td colspan="5" class="text-center">Aucun compte trouvé.</td></tr>
         <?php else: ?>
             <?php foreach ($comptes as $c): ?>
                 <tr>

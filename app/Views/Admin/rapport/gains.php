@@ -52,4 +52,71 @@
     <?php endif; ?>
 </table>
 
+<!-- Histogramme -->
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <strong>Progression des gains</strong>
+        <div class="d-flex align-items-center gap-2">
+            <select id="selectAnnee" class="form-select form-select-sm" style="width:auto;">
+                <?php for ($y = date('Y'); $y >= date('Y') - 3; $y--): ?>
+                    <option value="<?= $y ?>" <?= $y == date('Y') ? 'selected' : '' ?>><?= $y ?></option>
+                <?php endfor; ?>
+            </select>
+            <button class="btn btn-sm btn-primary" onclick="chargerGraphique()"><i class="bi bi-arrow-repeat"></i></button>
+        </div>
+    </div>
+    <div class="card-body">
+        <canvas id="chartGains" height="100"></canvas>
+    </div>
+</div>
+
+<script src="/assets/vendor/chartjs/chart.min.js"></script>
+<script>
+let chart = null;
+
+function chargerGraphique() {
+    const annee = document.getElementById('selectAnnee').value;
+    fetch('/admin/rapport/gains-par-mois?annee=' + annee)
+        .then(r => r.json())
+        .then(data => {
+            const mois = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
+            const labels = [];
+            const valeurs = [];
+            for (let m = 1; m <= 12; m++) {
+                const mm = String(m).padStart(2, '0');
+                labels.push(mois[m - 1]);
+                const trouve = data.donnees.find(d => d.mois === mm);
+                valeurs.push(trouve ? parseFloat(trouve.total_frais) : 0);
+            }
+            if (chart) chart.destroy();
+            chart = new Chart(document.getElementById('chartGains'), {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Frais (' + annee + ')',
+                        data: valeurs,
+                        backgroundColor: 'rgba(13, 110, 253, 0.7)',
+                        borderColor: 'rgba(13, 110, 253, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { beginAtZero: true, title: { display: true, text: 'Frais (Ar)' } }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        });
+}
+
+// Charger au démarrage
+chargerGraphique();
+</script>
+
+
 <?= $this->endSection() ?>

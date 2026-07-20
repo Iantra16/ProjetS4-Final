@@ -148,11 +148,11 @@ class OperationController extends BaseController
         $idNumero = session()->get('numero_id');
         $model = new OperationModel();
 
-        $type       = $this->request->getGet('type');
-        $montantMin = $this->request->getGet('montant_min') !== null ? (float) $this->request->getGet('montant_min') : null;
-        $montantMax = $this->request->getGet('montant_max') !== null ? (float) $this->request->getGet('montant_max') : null;
-        $dateDebut  = $this->request->getGet('date_debut');
-        $dateFin    = $this->request->getGet('date_fin');
+        $type       = $this->request->getGet('type') ?: null;
+        $montantMin = $this->request->getGet('montant_min') !== '' ? (float) $this->request->getGet('montant_min') : null;
+        $montantMax = $this->request->getGet('montant_max') !== '' ? (float) $this->request->getGet('montant_max') : null;
+        $dateDebut  = $this->request->getGet('date_debut') ?: null;
+        $dateFin    = $this->request->getGet('date_fin') ?: null;
 
         $data['operations'] = $model->historiqueFiltre($idNumero, $type, $montantMin, $montantMax, $dateDebut, $dateFin);
         $data['monId']      = $idNumero;

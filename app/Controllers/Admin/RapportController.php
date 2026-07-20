@@ -20,4 +20,23 @@ class RapportController extends BaseController
         $data['title'] = 'Rapport des gains';
         return view('Admin/rapport/gains', $data);
     }
+
+    public function gainsParMois()
+    {
+        $annee = $this->request->getGet('annee') ?: date('Y');
+        $model = new OperationModel();
+
+        $resultats = $model->db->table('operation o')
+            ->select("strftime('%m', o.date) as mois, SUM(o.frais) as total_frais, COUNT(*) as nb_operations")
+            ->join('type_operation t', 't.id = o.id_type_operation')
+            ->where("strftime('%Y', o.date)", $annee)
+            ->groupBy('mois')
+            ->orderBy('mois', 'ASC')
+            ->get()->getResultArray();
+
+        return $this->response->setJSON([
+            'annee'   => $annee,
+            'donnees'  => $resultats,
+        ]);
+    }
 }

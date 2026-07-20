@@ -10,9 +10,22 @@ class TypeOperationController extends BaseController
     public function index()
     {
         $model = new TypeOperationModel();
-        $data['types'] = $model->findAll();
+        $recherche = $this->request->getGet('q') ?: null;
+
+        $builder = $model->builder();
+        if ($recherche) {
+            $builder->like('nom', $recherche);
+        }
+        $data['types'] = $builder->orderBy('id', 'ASC')->get()->getResultArray();
+        $data['recherche'] = $recherche;
         $data['title'] = 'Types d\'opération';
         return view('Admin/types_operation/index', $data);
+    }
+
+    public function tranchesJson(int $idType)
+    {
+        $tranches = (new \App\Models\TranchesFraisModel())->parType($idType);
+        return $this->response->setJSON($tranches);
     }
 
     public function nouveau()

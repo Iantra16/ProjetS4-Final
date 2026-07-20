@@ -33,6 +33,10 @@ $routes->group('admin', function ($routes) {
     $routes->get('types-operation/modifier/(:num)', 'Admin\TypeOperationController::modifier/$1');
     $routes->post('types-operation/mettreAJour/(:num)', 'Admin\TypeOperationController::mettreAJour/$1');
     $routes->get('types-operation/supprimer/(:num)', 'Admin\TypeOperationController::supprimer/$1');
+    $routes->get('types-operation/tranches-json/(:num)', 'Admin\TypeOperationController::tranchesJson/$1');
+
+    // Rapport gains JSON
+    $routes->get('rapport/gains-par-mois', 'Admin\RapportController::gainsParMois');
 
     // CRUD Préfixe Opérateur
     $routes->get('prefixes', 'Admin\PrefixeController::index');

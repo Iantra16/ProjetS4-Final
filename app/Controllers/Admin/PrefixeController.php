@@ -10,7 +10,17 @@ class PrefixeController extends BaseController
     public function index()
     {
         $model = new PrefixeOperateurModel();
-        $data['prefixes'] = $model->findAll();
+        $recherche = $this->request->getGet('q') ?: null;
+
+        $builder = $model->builder();
+        if ($recherche) {
+            $builder->groupStart()
+                ->like('prefixe', $recherche)
+                ->orLike('nom', $recherche)
+            ->groupEnd();
+        }
+        $data['prefixes'] = $builder->orderBy('id', 'ASC')->get()->getResultArray();
+        $data['recherche'] = $recherche;
         $data['title'] = 'Gestion des préfixes';
         return view('Admin/prefixes/index', $data);
     }

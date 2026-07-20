@@ -12,7 +12,20 @@ class CompteController extends BaseController
     public function index()
     {
         $model = new NumeroTelephoneModel();
-        $data['comptes'] = $model->avecSoldeActuel();
+        $recherche = $this->request->getGet('q') ?: null;
+
+        $builder = $model->db->table('numero_telephone nt')
+            ->select('nt.id, nt.numero, po.nom as operateur, s.montant as solde_actuel, s.date as date_solde')
+            ->join('prefixe_operateur po', 'po.id = nt.id_prefixe')
+            ->join('solde s', 's.id = (SELECT id FROM solde WHERE id_numero_tel = nt.id ORDER BY id DESC LIMIT 1)', 'left');
+        if ($recherche) {
+            $builder->groupStart()
+                ->like('nt.numero', $recherche)
+                ->orLike('po.nom', $recherche)
+            ->groupEnd();
+        }
+        $data['comptes'] = $builder->orderBy('nt.id', 'ASC')->get()->getResultArray();
+        $data['recherche'] = $recherche;
         $data['title'] = 'Comptes clients';
         return view('Admin/comptes/index', $data);
     }
