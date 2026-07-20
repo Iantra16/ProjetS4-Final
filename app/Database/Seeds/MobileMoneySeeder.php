@@ -22,18 +22,29 @@ class MobileMoneySeeder extends Seeder
             ['nom' => 'transfert'],
         ]);
 
-        // tranches_frais
+        // tranches_frais — barème retrait (id_type_operation = 2)
         $this->db->table('tranches_frais')->insertBatch([
-            ['montant_min' => 100, 'montant_max' => 1000, 'montant_frais' => 50],
-            ['montant_min' => 1001, 'montant_max' => 5000, 'montant_frais' => 50],
-            ['montant_min' => 5001, 'montant_max' => 10000, 'montant_frais' => 100],
-            ['montant_min' => 10001, 'montant_max' => 25000, 'montant_frais' => 200],
-            ['montant_min' => 25001, 'montant_max' => 50000, 'montant_frais' => 400],
-            ['montant_min' => 50001, 'montant_max' => 100000, 'montant_frais' => 800],
-            ['montant_min' => 100001, 'montant_max' => 250000, 'montant_frais' => 1500],
-            ['montant_min' => 250001, 'montant_max' => 500000, 'montant_frais' => 1500],
-            ['montant_min' => 500001, 'montant_max' => 1000000, 'montant_frais' => 2500],
-            ['montant_min' => 1000001, 'montant_max' => 2000000, 'montant_frais' => 3000],
+            ['id_type_operation' => 2, 'montant_min' => 100,    'montant_max' => 1000,    'montant_frais' => 50],
+            ['id_type_operation' => 2, 'montant_min' => 1001,   'montant_max' => 5000,    'montant_frais' => 50],
+            ['id_type_operation' => 2, 'montant_min' => 5001,   'montant_max' => 10000,   'montant_frais' => 100],
+            ['id_type_operation' => 2, 'montant_min' => 10001,  'montant_max' => 25000,   'montant_frais' => 200],
+            ['id_type_operation' => 2, 'montant_min' => 25001,  'montant_max' => 50000,   'montant_frais' => 400],
+            ['id_type_operation' => 2, 'montant_min' => 50001,  'montant_max' => 100000,  'montant_frais' => 800],
+            ['id_type_operation' => 2, 'montant_min' => 100001, 'montant_max' => 250000,  'montant_frais' => 1500],
+            ['id_type_operation' => 2, 'montant_min' => 250001, 'montant_max' => 500000,  'montant_frais' => 1500],
+            ['id_type_operation' => 2, 'montant_min' => 500001, 'montant_max' => 1000000, 'montant_frais' => 2500],
+        ]);
+        // tranches_frais — barème transfert (id_type_operation = 3)
+        $this->db->table('tranches_frais')->insertBatch([
+            ['id_type_operation' => 3, 'montant_min' => 100,    'montant_max' => 1000,    'montant_frais' => 100],
+            ['id_type_operation' => 3, 'montant_min' => 1001,   'montant_max' => 5000,    'montant_frais' => 100],
+            ['id_type_operation' => 3, 'montant_min' => 5001,   'montant_max' => 10000,   'montant_frais' => 200],
+            ['id_type_operation' => 3, 'montant_min' => 10001,  'montant_max' => 25000,   'montant_frais' => 400],
+            ['id_type_operation' => 3, 'montant_min' => 25001,  'montant_max' => 50000,   'montant_frais' => 800],
+            ['id_type_operation' => 3, 'montant_min' => 50001,  'montant_max' => 100000,  'montant_frais' => 1500],
+            ['id_type_operation' => 3, 'montant_min' => 100001, 'montant_max' => 250000,  'montant_frais' => 3000],
+            ['id_type_operation' => 3, 'montant_min' => 250001, 'montant_max' => 500000,  'montant_frais' => 3000],
+            ['id_type_operation' => 3, 'montant_min' => 500001, 'montant_max' => 1000000, 'montant_frais' => 5000],
         ]);
 
         // numero_telephone

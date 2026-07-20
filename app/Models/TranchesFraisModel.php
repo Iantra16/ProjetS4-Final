@@ -7,5 +7,5 @@ use CodeIgniter\Model;
 class TranchesFraisModel extends Model
 {
     protected $table = 'tranches_frais';
-    protected $allowedFields = ['montant_min', 'montant_max', 'montant_frais', 'date'];
+    protected $allowedFields = ['id_type_operation', 'montant_min', 'montant_max', 'montant_frais', 'date'];
 }

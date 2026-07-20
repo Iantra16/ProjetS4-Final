@@ -95,6 +95,9 @@ Méthodes : `index`, `new`, `create`, `edit`, `update`, `delete`
 
 ### 3. CRUD Tranches de Frais
 
+> [!IMPORTANT]
+> La table `tranches_frais` possède désormais une colonne `id_type_operation` (FK vers `type_operation`). Chaque type d'opération a son propre barème. Le dépôt n'a pas de tranches (frais = 0 en dur).
+
 #### `Routes.php` — ajouter dans `admin`
 ```php
 $routes->get('tranches', 'Admin\TrancheFraisController::index');
@@ -107,22 +110,40 @@ $routes->get('tranches/delete/(:num)', 'Admin\TrancheFraisController::delete/$1'
 
 #### `app/Models/TranchesFraisModel.php` — méthodes à ajouter
 ```php
+// allowedFields déjà mis à jour :
+// protected $allowedFields = ['id_type_operation', 'montant_min', 'montant_max', 'montant_frais', 'date'];
+
 protected $validationRules = [
-    'montant_min'   => 'required|numeric',
-    'montant_max'   => 'required|numeric|greater_than[{montant_min}]', // ou vérif manuelle
-    'montant_frais' => 'required|numeric',
+    'id_type_operation' => 'required|is_natural_no_zero',
+    'montant_min'       => 'required|numeric',
+    'montant_max'       => 'required|numeric',
+    'montant_frais'     => 'required|numeric',
 ];
 
-// Récupère toutes les tranches triées par montant_min croissant
+// Toutes les tranches triées par type puis par montant_min
 public function getAllSorted(): array
 {
-    return $this->orderBy('montant_min', 'ASC')->findAll();
+    return $this->db->table($this->table . ' tf')
+        ->select('tf.*, t.nom as type_nom')
+        ->join('type_operation t', 't.id = tf.id_type_operation')
+        ->orderBy('tf.id_type_operation', 'ASC')
+        ->orderBy('tf.montant_min', 'ASC')
+        ->get()->getResultArray();
 }
 
-// Vérifie si une tranche [min, max] chevauche une tranche existante (hors id exclu)
-public function chevauchementExiste(float $min, float $max, ?int $excludeId = null): bool
+// Tranches pour un type donné, triées par montant_min
+public function getParType(int $idTypeOperation): array
+{
+    return $this->where('id_type_operation', $idTypeOperation)
+                ->orderBy('montant_min', 'ASC')
+                ->findAll();
+}
+
+// Vérifie chevauchement POUR UN MÊME TYPE d'opération
+public function chevauchementExiste(int $idTypeOperation, float $min, float $max, ?int $excludeId = null): bool
 {
     $builder = $this->db->table($this->table)
+        ->where('id_type_operation', $idTypeOperation)
         ->where('montant_min <', $max)
         ->where('montant_max >', $min);
     if ($excludeId) {
@@ -131,21 +152,31 @@ public function chevauchementExiste(float $min, float $max, ?int $excludeId = nu
     return $builder->countAllResults() > 0;
 }
 
-// Trouve la tranche applicable pour un montant donné
-public function trouverTranche(float $montant): ?array
+// Trouve la tranche applicable pour un montant ET un type d'opération donnés
+public function trouverTranche(float $montant, int $idTypeOperation): ?array
 {
-    return $this->where('montant_min <=', $montant)
+    return $this->where('id_type_operation', $idTypeOperation)
+                ->where('montant_min <=', $montant)
                 ->where('montant_max >=', $montant)
                 ->first();
+}
+
+// Point d'entrée unique pour calculer les frais (0 si aucune tranche trouvée)
+public function calculerFrais(float $montant, int $idTypeOperation): float
+{
+    $tranche = $this->trouverTranche($montant, $idTypeOperation);
+    return $tranche ? (float) $tranche['montant_frais'] : 0.0;
 }
 ```
 
 #### `app/Controllers/Admin/TrancheFraisController.php` — [NOUVEAU]
-- `create` et `update` : appeler `$model->chevauchementExiste(...)` avant save → erreur si chevauchement
+- `index` : passer aussi `$types = (new TypeOperationModel())->findAll()` pour afficher le nom du type dans le tableau
+- `new` / `edit` : passer `$types` à la vue pour afficher un `<select>` de types d'opération
+- `create` / `update` : appeler `$model->chevauchementExiste($idType, $min, $max, $excludeId)` → erreur si chevauchement
 
 #### Vues à créer
-- `app/Views/Admin/tranches/index.php` — tableau trié par montant_min + col montant_frais
-- `app/Views/Admin/tranches/form.php` — 3 champs numériques
+- `app/Views/Admin/tranches/index.php` — tableau groupé par type (colonne Type + montant_min/max/frais)
+- `app/Views/Admin/tranches/form.php` — `<select>` type d'opération + 3 champs numériques
 
 ---
 
@@ -362,14 +393,15 @@ public function solde()
 ### 3. Opérations (Dépôt, Retrait, Transfert)
 
 #### Fonction partagée `calculerFrais` — dans `TranchesFraisModel`
+
+La signature prend maintenant **l'id du type d'opération** en paramètre :
 ```php
-// Déjà défini ci-dessus dans trouverTranche()
-// Wrapper à appeler dans les controllers :
-public function calculerFrais(float $montant): float
-{
-    $tranche = $this->trouverTranche($montant);
-    return $tranche ? (float) $tranche['montant_frais'] : 0.0;
-}
+// Déjà défini dans TranchesFraisModel (voir section 3 ci-dessus)
+public function calculerFrais(float $montant, int $idTypeOperation): float
+
+// Exemple d'appel depuis un controller :
+$idTypeRetrait = (new TypeOperationModel())->where('nom', 'retrait')->first()['id'];
+$frais = $tranchesModel->calculerFrais($montant, $idTypeRetrait);
 ```
 
 #### `app/Models/OperationModel.php` — méthodes à ajouter
@@ -422,7 +454,8 @@ public function insertNouveauSolde(int $idNumeroTel, float $delta): void
 **retrait() [POST]** :
 ```
 1. Valider montant > 0
-2. frais = $tranchesModel->calculerFrais($montant)
+2. $idTypeRetrait = TypeOperationModel->where('nom','retrait')->first()['id']
+   frais = $tranchesModel->calculerFrais($montant, $idTypeRetrait)
 3. total = montant + frais
 4. Vérifier solde actuel >= total → sinon erreur "Solde insuffisant"
 5. db->transStart()
@@ -438,7 +471,8 @@ public function insertNouveauSolde(int $idNumeroTel, float $delta): void
 1. Valider montant > 0, numero_dest non vide
 2. Vérifier numero_dest != propre numéro
 3. Chercher destinataire dans numero_telephone → erreur si inexistant
-4. frais = $tranchesModel->calculerFrais($montant)
+4. $idTypeTransfert = TypeOperationModel->where('nom','transfert')->first()['id']
+   frais = $tranchesModel->calculerFrais($montant, $idTypeTransfert)
 5. Vérifier solde >= montant + frais
 6. db->transStart()
    - insert operation (avec id_numero_tel_dest)
@@ -505,7 +539,7 @@ Ajouter les liens contextuels si session `numero_id` est active :
 | `app/Config/Routes.php` | Groupe `admin` **sans filtre** (accès direct) + nouvelles routes admin + groupe `client` |
 | `app/Config/Filters.php` | Ajout alias `'client' => ClientAuthFilter::class` (côté admin : pas de filtre pour l'instant) |
 | `app/Models/PrefixeOperateurModel.php` | + `validationRules`, + `estUtilise()`, + `findByPrefixe()` |
-| `app/Models/TranchesFraisModel.php` | + `validationRules`, + `getAllSorted()`, + `chevauchementExiste()`, + `trouverTranche()`, + `calculerFrais()` |
+| `app/Models/TranchesFraisModel.php` | + `id_type_operation` dans `allowedFields`, + `validationRules`, + `getAllSorted()`, + `getParType()`, + `chevauchementExiste(idType,…)`, + `trouverTranche(montant, idType)`, + `calculerFrais(montant, idType)` |
 | `app/Models/NumeroTelephoneModel.php` | + `findByNumero()`, + `creerCompte()`, + `avecSoldeActuel()` |
 | `app/Models/SoldeModel.php` | + `dernierSolde()`, + `insertNouveauSolde()` |
 | `app/Models/OperationModel.php` | + `gainsParType()`, + `gainsParPeriode()`, + `historiquePourNumero()` |

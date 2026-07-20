@@ -70,6 +70,10 @@ php spark db:seed MobileMoneySeeder
 ```
 8. le projetfinal.db est generer automatiquement
 
+
+> Si tu as déjà lancé php spark migrate, il faudra faire php spark migrate:rollback puis relancer php spark migrate + php spark db:seed MobileMoneySeeder pour repartir avec la nouvelle structure.
+
+
 #### etape 2 : fonctionnalites
 ##### Operateur
 1. config prefixe operateur

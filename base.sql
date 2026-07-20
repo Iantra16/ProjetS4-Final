@@ -50,11 +50,14 @@ CREATE TABLE IF NOT EXISTS type_operation (
 -- Table : tranches_frais
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS tranches_frais (
-    id            INTEGER  PRIMARY KEY AUTOINCREMENT,
-    montant_min   REAL     NOT NULL,
-    montant_max   REAL     NOT NULL,
-    montant_frais REAL     NOT NULL,
-    date          DATETIME NOT NULL DEFAULT (DATETIME('now')),
+    id                 INTEGER  PRIMARY KEY AUTOINCREMENT,
+    id_type_operation  INTEGER  NOT NULL,
+    montant_min        REAL     NOT NULL,
+    montant_max        REAL     NOT NULL,
+    montant_frais      REAL     NOT NULL,
+    date               DATETIME NOT NULL DEFAULT (DATETIME('now')),
+    FOREIGN KEY (id_type_operation) REFERENCES type_operation(id)
+        ON UPDATE CASCADE ON DELETE RESTRICT,
     CHECK (montant_min >= 0),
     CHECK (montant_max > montant_min),
     CHECK (montant_frais >= 0)
@@ -99,17 +102,29 @@ INSERT INTO type_operation (nom) VALUES
 ('retrait'),
 ('transfert');
 
-INSERT INTO tranches_frais (montant_min, montant_max, montant_frais) VALUES
-(100, 1000, 50),
-(1001, 5000, 50),
-(5001, 10000, 100),
-(10001, 25000, 200),
-(25001, 50000, 400),
-(50001, 100000, 800),
-(100001, 250000, 1500),
-(250001, 500000, 1500),
-(500001, 1000000, 2500),
-(1000001, 2000000, 3000);
+-- Barème retrait (id_type_operation = 2)
+INSERT INTO tranches_frais (id_type_operation, montant_min, montant_max, montant_frais) VALUES
+(2, 100,    1000,    50),
+(2, 1001,   5000,    50),
+(2, 5001,   10000,   100),
+(2, 10001,  25000,   200),
+(2, 25001,  50000,   400),
+(2, 50001,  100000,  800),
+(2, 100001, 250000,  1500),
+(2, 250001, 500000,  1500),
+(2, 500001, 1000000, 2500);
+
+-- Barème transfert (id_type_operation = 3)
+INSERT INTO tranches_frais (id_type_operation, montant_min, montant_max, montant_frais) VALUES
+(3, 100,    1000,    100),
+(3, 1001,   5000,    100),
+(3, 5001,   10000,   200),
+(3, 10001,  25000,   400),
+(3, 25001,  50000,   800),
+(3, 50001,  100000,  1500),
+(3, 100001, 250000,  3000),
+(3, 250001, 500000,  3000),
+(3, 500001, 1000000, 5000);
 
 INSERT INTO numero_telephone (id_prefixe, numero, date_creation) VALUES
 (1, '0331234567', '2026-07-01 08:00:00'),  -- Airtel
@@ -138,14 +153,14 @@ INSERT INTO operation (id_type_operation, id_numero_tel, montant, frais, date) V
 (1, 4, 15000, 0, '2026-07-07 09:00:00'),   -- dépôt compte 4
 (1, 5, 200000, 0, '2026-07-08 12:00:00');  -- dépôt compte 5
 
--- Retrait (compte 1 retire 5000, frais tranche 5001-10000 = 100 mais ici 5000 est dans tranche 1001-5000 = 50)
+-- Retrait : compte 1 retire 5000 → tranche retrait [1001-5000] = 50 Ar de frais
 INSERT INTO operation (id_type_operation, id_numero_tel, montant, frais, date) VALUES
 (2, 1, 5000, 50, '2026-07-09 08:30:00');
 
--- Transfert (compte 2 envoie 10000 vers compte 4, frais tranche 5001-10000 = 100)
+-- Transfert : compte 2 envoie 10000 vers compte 4 → tranche transfert [5001-10000] = 200 Ar de frais
 INSERT INTO operation (id_type_operation, id_numero_tel, id_numero_tel_dest, montant, frais, date) VALUES
-(3, 2, 4, 10000, 100, '2026-07-09 09:00:00');
+(3, 2, 4, 10000, 200, '2026-07-09 09:00:00');
 
--- Transfert (compte 5 envoie 25000 vers compte 3, frais tranche 10001-25000 = 200)
+-- Transfert : compte 5 envoie 25000 vers compte 3 → tranche transfert [10001-25000] = 400 Ar de frais
 INSERT INTO operation (id_type_operation, id_numero_tel, id_numero_tel_dest, montant, frais, date) VALUES
-(3, 5, 3, 25000, 200, '2026-07-09 09:30:00');
+(3, 5, 3, 25000, 400, '2026-07-09 09:30:00');
