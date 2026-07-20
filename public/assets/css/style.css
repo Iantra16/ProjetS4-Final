@@ -1,0 +1,17 @@
+body {
+    background-color: #f4f6f9;
+}
+
+main {
+    background: #fff;
+    border-radius: 8px;
+}
+
+.nav-link:hover {
+    background-color: rgba(255,255,255,.1);
+    border-radius: 4px;
+}
+
+table th {
+    white-space: nowrap;
+}
