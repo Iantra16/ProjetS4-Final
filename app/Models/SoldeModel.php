@@ -16,7 +16,7 @@ class SoldeModel extends Model
                     ->first();
     }
 
-    public function insertNouveauSolde(int $idNumeroTel, float $delta): void
+    public function insererNouveauSolde(int $idNumeroTel, float $delta): void
     {
         $ancien = $this->dernierSolde($idNumeroTel);
         $ancienMontant = $ancien ? (float) $ancien['montant'] : 0.0;

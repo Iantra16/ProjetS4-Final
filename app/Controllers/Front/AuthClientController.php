@@ -29,7 +29,7 @@ class AuthClientController extends BaseController
             $prefixe = substr($numero, 0, 3);
 
             $prefixeModel = new PrefixeOperateurModel();
-            $prefixeData  = $prefixeModel->findByPrefixe($prefixe);
+            $prefixeData  = $prefixeModel->trouverParPrefixe($prefixe);
 
             if (!$prefixeData) {
                 return redirect()->back()->withInput()
@@ -37,7 +37,7 @@ class AuthClientController extends BaseController
             }
 
             $numeroModel = new NumeroTelephoneModel();
-            $numeroData  = $numeroModel->findByNumero($numero);
+            $numeroData  = $numeroModel->trouverParNumero($numero);
 
             if ($numeroData) {
                 // Compte existant → connexion directe
@@ -51,11 +51,7 @@ class AuthClientController extends BaseController
 
                 // Solde initial à 0
                 $soldeModel = new SoldeModel();
-                $soldeModel->insert([
-                    'id_numero_tel' => $idNouveauNumero,
-                    'montant'       => 0.0,
-                    'date'          => date('Y-m-d H:i:s'),
-                ]);
+                $soldeModel->insererNouveauSolde($idNouveauNumero, 0.0);
 
                 session()->set([
                     'numero_id' => $idNouveauNumero,

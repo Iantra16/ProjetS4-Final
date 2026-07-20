@@ -10,7 +10,6 @@
 <table class="table table-bordered table-striped">
     <thead class="table-dark">
         <tr>
-            <th>#</th>
             <th>Préfixe</th>
             <th>Nom</th>
             <th>Actions</th>
@@ -22,7 +21,6 @@
         <?php else: ?>
             <?php foreach ($prefixes as $p): ?>
                 <tr>
-                    <td><?= esc($p['id']) ?></td>
                     <td><?= esc($p['prefixe']) ?></td>
                     <td><?= esc($p['nom']) ?></td>
                     <td>

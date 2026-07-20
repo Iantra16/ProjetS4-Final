@@ -21,7 +21,7 @@ class PrefixeOperateurModel extends Model
             ->countAllResults() > 0;
     }
 
-    public function findByPrefixe(string $prefixe): ?array
+    public function trouverParPrefixe(string $prefixe): ?array
     {
         return $this->where('prefixe', $prefixe)->first();
     }
