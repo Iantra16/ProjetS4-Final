@@ -18,10 +18,8 @@
       <div class="d-flex align-items-center">
         <?php if (session()->get('numero_id')): ?>
           <a href="/client/solde" class="btn btn-outline-light btn-sm me-2">Mon solde</a>
+          <a href="/client/operation" class="btn btn-outline-light btn-sm me-2">Opération</a>
           <a href="/client/historique" class="btn btn-outline-light btn-sm me-2">Historique</a>
-          <a href="/client/depot" class="btn btn-outline-light btn-sm me-2">Dépôt</a>
-          <a href="/client/retrait" class="btn btn-outline-light btn-sm me-2">Retrait</a>
-          <a href="/client/transfert" class="btn btn-outline-light btn-sm me-2">Transfert</a>
           <form method="POST" action="/client/logout" class="d-inline">
             <?= csrf_field() ?>
             <button class="btn btn-outline-danger btn-sm">Déconnexion</button>

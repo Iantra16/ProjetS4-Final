@@ -10,23 +10,35 @@
         <h2 class="mt-3">Mon solde</h2>
         <p class="text-muted"><?= esc($numero) ?></p>
 
+        <form method="GET" action="/client/solde" class="row g-2 justify-content-center mb-3">
+          <div class="col-auto">
+            <input type="date" class="form-control form-control-sm" name="date" value="<?= esc($date) ?>">
+          </div>
+          <div class="col-auto">
+            <button type="submit" class="btn btn-outline-primary btn-sm"><i class="bi bi-search"></i> Chercher</button>
+          </div>
+          <?php if ($date !== date('Y-m-d')): ?>
+            <div class="col-auto">
+              <a href="/client/solde" class="btn btn-outline-secondary btn-sm">Aujourd'hui</a>
+            </div>
+          <?php endif; ?>
+        </form>
+
         <div class="display-4 fw-bold text-success my-4">
           <?= number_format($solde['montant'] ?? 0, 2, ',', ' ') ?> F
         </div>
 
         <p class="text-muted small">
-          Dernière mise à jour : <?= esc($solde['date'] ?? '—') ?>
+          <?php if ($date !== date('Y-m-d')): ?>
+            Solde au <?= esc($date) ?>
+          <?php else: ?>
+            Dernière mise à jour : <?= esc($solde['date'] ?? '—') ?>
+          <?php endif; ?>
         </p>
 
         <div class="d-grid gap-2 d-md-flex justify-content-center mt-4">
-          <a href="/client/depot" class="btn btn-success">
-            <i class="bi bi-plus-circle"></i> Dépôt
-          </a>
-          <a href="/client/retrait" class="btn btn-warning">
-            <i class="bi bi-dash-circle"></i> Retrait
-          </a>
-          <a href="/client/transfert" class="btn btn-info text-white">
-            <i class="bi bi-send"></i> Transfert
+          <a href="/client/operation" class="btn btn-primary">
+            <i class="bi bi-arrow-left-right"></i> Effectuer une opération
           </a>
         </div>
 

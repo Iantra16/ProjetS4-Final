@@ -11,184 +11,136 @@ use App\Models\SoldeModel;
 
 class OperationController extends BaseController
 {
-    public function depot()
+    public function operation()
     {
-        if ($this->request->is('post')) {
-            $montant = (float) $this->request->getPost('montant');
+        $typeModel = new TypeOperationModel();
+        $soldeModel = new SoldeModel();
 
-            if ($montant <= 0) {
-                return redirect()->back()->withInput()
-                    ->with('error', 'Le montant doit être supérieur à 0.');
-            }
+        $data['types']        = $typeModel->findAll();
+        $data['solde']        = $soldeModel->dernierSolde(session()->get('numero_id'));
+        $data['title']        = 'Effectuer une opération';
+        $data['typesJson']    = $data['types'];
 
-            $typeModel = new TypeOperationModel();
-            $type = $typeModel->where('nom', 'depot')->first();
+        return view('Front/operation', $data);
+    }
 
-            $operationModel = new OperationModel();
+    public function tranchesJson()
+    {
+        $idType = (int) $this->request->getGet('type_id');
+        $tranches = (new TranchesFraisModel())->parType($idType);
+        return $this->response->setJSON($tranches);
+    }
+
+    public function numeroExisteJson()
+    {
+        $numero = $this->request->getGet('numero');
+        $existe = (new NumeroTelephoneModel())->trouverParNumero($numero) !== null;
+        return $this->response->setJSON(['existe' => $existe]);
+    }
+
+    public function enregistrer()
+    {
+        $typeNom       = $this->request->getPost('type_operation');
+        $montant       = (float) $this->request->getPost('montant');
+        $numeroDest    = trim((string) $this->request->getPost('numero_dest'));
+        $idNumero      = session()->get('numero_id');
+        $soldeModel    = new SoldeModel();
+        $typeModel     = new TypeOperationModel();
+        $tranchesModel = new TranchesFraisModel();
+        $numeroModel   = new NumeroTelephoneModel();
+        $operationModel = new OperationModel();
+
+        if ($montant <= 0) {
+            return redirect()->back()->withInput()->with('error', 'Le montant doit être supérieur à 0.');
+        }
+
+        $type = $typeModel->where('nom', $typeNom)->first();
+        if (!$type) {
+            return redirect()->back()->withInput()->with('error', 'Type d\'opération invalide.');
+        }
+
+        $soldeActuel = $soldeModel->dernierSolde($idNumero);
+        $montantSolde = $soldeActuel ? (float) $soldeActuel['montant'] : 0.0;
+
+        // Dépôt : frais = 0, pas de destinataire
+        if ($typeNom === 'depot') {
             $operationModel->insert([
                 'id_type_operation' => $type['id'],
-                'id_numero_tel'     => session()->get('numero_id'),
+                'id_numero_tel'     => $idNumero,
                 'montant'           => $montant,
                 'frais'             => 0.0,
                 'date'              => date('Y-m-d H:i:s'),
             ]);
-
-            $soldeModel = new SoldeModel();
-            $soldeModel->insererNouveauSolde(session()->get('numero_id'), $montant);
-
-            return redirect()->to('/client/solde')
-                ->with('success', "Dépôt de " . number_format($montant, 0, ',', ' ') . " F effectué.");
+            $soldeModel->insererNouveauSolde($idNumero, $montant);
+            return redirect()->to('/client/solde')->with('success', "Dépôt de " . number_format($montant, 0, ',', ' ') . " F effectué.");
         }
 
-        return view('Front/depot', [
-            'title'  => 'Dépôt',
-            'solde'  => (new SoldeModel())->dernierSolde(session()->get('numero_id')),
-        ]);
-    }
-
-    public function retrait()
-    {
-        $soldeModel = new SoldeModel();
-        $typeModel = new TypeOperationModel();
-        $tranchesModel = new TranchesFraisModel();
-
-        if ($this->request->is('post')) {
-            $montant = (float) $this->request->getPost('montant');
-
-            if ($montant <= 0) {
-                return redirect()->back()->withInput()
-                    ->with('error', 'Le montant doit être supérieur à 0.');
-            }
-
-            $type = $typeModel->where('nom', 'retrait')->first();
-            $frais = $tranchesModel->calculerFrais($montant, $type['id']);
-            $total = $montant + $frais;
-
-            $soldeActuel = $soldeModel->dernierSolde(session()->get('numero_id'));
-            $montantSolde = $soldeActuel ? (float) $soldeActuel['montant'] : 0.0;
-
+        // Retrait : frais selon tranche, pas de destinataire
+        if ($typeNom === 'retrait') {
+            $frais  = $tranchesModel->calculerFrais($montant, $type['id']);
+            $total  = $montant + $frais;
             if ($montantSolde < $total) {
-                return redirect()->back()->withInput()
-                    ->with('error', "Solde insuffisant. Solde actuel : " . number_format($montantSolde, 0, ',', ' ') . " F, total needed : " . number_format($total, 0, ',', ' ') . " F (montant + frais).");
+                return redirect()->back()->withInput()->with('error', "Solde insuffisant. Solde : " . number_format($montantSolde, 0, ',', ' ') . " F, total requis : " . number_format($total, 0, ',', ' ') . " F.");
             }
 
             $db = \Config\Database::connect();
             $db->transStart();
-
-            $operationModel = new OperationModel();
             $operationModel->insert([
                 'id_type_operation' => $type['id'],
-                'id_numero_tel'     => session()->get('numero_id'),
+                'id_numero_tel'     => $idNumero,
                 'montant'           => $montant,
                 'frais'             => $frais,
                 'date'              => date('Y-m-d H:i:s'),
             ]);
-
-            $soldeModel->insererNouveauSolde(session()->get('numero_id'), -$total);
-
+            $soldeModel->insererNouveauSolde($idNumero, -$total);
             $db->transComplete();
 
             if ($db->transStatus() === false) {
-                return redirect()->back()->withInput()
-                    ->with('error', 'Erreur lors du retrait. Veuillez réessayer.');
+                return redirect()->back()->withInput()->with('error', 'Erreur lors du retrait.');
             }
-
-            return redirect()->to('/client/solde')
-                ->with('success', "Retrait de " . number_format($montant, 0, ',', ' ') . " F effectué (frais : " . number_format($frais, 0, ',', ' ') . " F).");
+            return redirect()->to('/client/solde')->with('success', "Retrait de " . number_format($montant, 0, ',', ' ') . " F effectué (frais : " . number_format($frais, 0, ',', ' ') . " F).");
         }
 
-        $type = $typeModel->where('nom', 'retrait')->first();
-        $soldeActuel = $soldeModel->dernierSolde(session()->get('numero_id'));
-        $montantSolde = $soldeActuel ? (float) $soldeActuel['montant'] : 0.0;
-
-        return view('Front/retrait', [
-            'title'        => 'Retrait',
-            'frais'        => $tranchesModel->parType($type['id']),
-            'montantSolde' => $montantSolde,
-        ]);
-    }
-
-    public function transfert()
-    {
-        $soldeModel = new SoldeModel();
-        $typeModel = new TypeOperationModel();
-        $tranchesModel = new TranchesFraisModel();
-
-        if ($this->request->is('post')) {
-            $montant    = (float) $this->request->getPost('montant');
-            $numeroDest = trim($this->request->getPost('numero_dest'));
-
-            if ($montant <= 0) {
-                return redirect()->back()->withInput()
-                    ->with('error', 'Le montant doit être supérieur à 0.');
-            }
-
+        // Transfert : frais selon tranche, destinataire obligatoire
+        if ($typeNom === 'transfert') {
             if (empty($numeroDest)) {
-                return redirect()->back()->withInput()
-                    ->with('error', 'Veuillez saisir le numéro du destinataire.');
+                return redirect()->back()->withInput()->with('error', 'Veuillez saisir le numéro du destinataire.');
             }
-
             if ($numeroDest === session()->get('numero')) {
-                return redirect()->back()->withInput()
-                    ->with('error', 'Vous ne pouvez pas effectuer un transfert vers votre propre numéro.');
+                return redirect()->back()->withInput()->with('error', 'Vous ne pouvez pas vous envoyer de l\'argent.');
             }
-
-            $numeroModel = new NumeroTelephoneModel();
             $destinataire = $numeroModel->trouverParNumero($numeroDest);
-
             if (!$destinataire) {
-                return redirect()->back()->withInput()
-                    ->with('error', "Le numéro {$numeroDest} n'existe pas.");
+                return redirect()->back()->withInput()->with('error', "Le numéro {$numeroDest} n'existe pas.");
             }
 
-            $type = $typeModel->where('nom', 'transfert')->first();
-            $frais = $tranchesModel->calculerFrais($montant, $type['id']);
-            $total = $montant + $frais;
-
-            $soldeActuel = $soldeModel->dernierSolde(session()->get('numero_id'));
-            $montantSolde = $soldeActuel ? (float) $soldeActuel['montant'] : 0.0;
-
+            $frais  = $tranchesModel->calculerFrais($montant, $type['id']);
+            $total  = $montant + $frais;
             if ($montantSolde < $total) {
-                return redirect()->back()->withInput()
-                    ->with('error', "Solde insuffisant. Solde actuel : " . number_format($montantSolde, 0, ',', ' ') . " F, total needed : " . number_format($total, 0, ',', ' ') . " F (montant + frais).");
+                return redirect()->back()->withInput()->with('error', "Solde insuffisant. Solde : " . number_format($montantSolde, 0, ',', ' ') . " F, total requis : " . number_format($total, 0, ',', ' ') . " F.");
             }
 
             $db = \Config\Database::connect();
             $db->transStart();
-
-            $operationModel = new OperationModel();
             $operationModel->insert([
-                'id_type_operation'   => $type['id'],
-                'id_numero_tel'       => session()->get('numero_id'),
-                'id_numero_tel_dest'  => $destinataire['id'],
-                'montant'             => $montant,
-                'frais'               => $frais,
-                'date'                => date('Y-m-d H:i:s'),
+                'id_type_operation'  => $type['id'],
+                'id_numero_tel'      => $idNumero,
+                'id_numero_tel_dest' => $destinataire['id'],
+                'montant'            => $montant,
+                'frais'              => $frais,
+                'date'               => date('Y-m-d H:i:s'),
             ]);
-
-            $soldeModel->insererNouveauSolde(session()->get('numero_id'), -$total);
+            $soldeModel->insererNouveauSolde($idNumero, -$total);
             $soldeModel->insererNouveauSolde($destinataire['id'], $montant);
-
             $db->transComplete();
 
             if ($db->transStatus() === false) {
-                return redirect()->back()->withInput()
-                    ->with('error', 'Erreur lors du transfert. Veuillez réessayer.');
+                return redirect()->back()->withInput()->with('error', 'Erreur lors du transfert.');
             }
-
-            return redirect()->to('/client/solde')
-                ->with('success', "Transfert de " . number_format($montant, 0, ',', ' ') . " F vers {$numeroDest} effectué (frais : " . number_format($frais, 0, ',', ' ') . " F).");
+            return redirect()->to('/client/solde')->with('success', "Transfert de " . number_format($montant, 0, ',', ' ') . " F vers {$numeroDest} effectué (frais : " . number_format($frais, 0, ',', ' ') . " F).");
         }
 
-        $type = $typeModel->where('nom', 'transfert')->first();
-        $soldeActuel = $soldeModel->dernierSolde(session()->get('numero_id'));
-        $montantSolde = $soldeActuel ? (float) $soldeActuel['montant'] : 0.0;
-
-        return view('Front/transfert', [
-            'title'        => 'Transfert',
-            'frais'        => $tranchesModel->parType($type['id']),
-            'montantSolde' => $montantSolde,
-        ]);
+        return redirect()->back()->withInput()->with('error', 'Type d\'opération inconnu.');
     }
 
     public function historique()
@@ -196,9 +148,23 @@ class OperationController extends BaseController
         $idNumero = session()->get('numero_id');
         $model = new OperationModel();
 
-        $data['operations'] = $model->historiquePourNumero($idNumero);
+        $type       = $this->request->getGet('type');
+        $montantMin = $this->request->getGet('montant_min') !== null ? (float) $this->request->getGet('montant_min') : null;
+        $montantMax = $this->request->getGet('montant_max') !== null ? (float) $this->request->getGet('montant_max') : null;
+        $dateDebut  = $this->request->getGet('date_debut');
+        $dateFin    = $this->request->getGet('date_fin');
+
+        $data['operations'] = $model->historiqueFiltre($idNumero, $type, $montantMin, $montantMax, $dateDebut, $dateFin);
         $data['monId']      = $idNumero;
-        $data['title']      = 'Mon historique';
+        $data['types']      = (new TypeOperationModel())->findAll();
+        $data['filters']    = [
+            'type'        => $type,
+            'montant_min' => $this->request->getGet('montant_min'),
+            'montant_max' => $this->request->getGet('montant_max'),
+            'date_debut'  => $dateDebut,
+            'date_fin'    => $dateFin,
+        ];
+        $data['title'] = 'Mon historique';
 
         return view('Front/historique', $data);
     }

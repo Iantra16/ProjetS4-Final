@@ -16,6 +16,14 @@ class SoldeModel extends Model
                     ->first();
     }
 
+    public function dernierSoldeAvantDate(int $idNumeroTel, string $date): ?array
+    {
+        return $this->where('id_numero_tel', $idNumeroTel)
+                    ->where('date <=', $date . ' 23:59:59')
+                    ->orderBy('id', 'DESC')
+                    ->first();
+    }
+
     public function insererNouveauSolde(int $idNumeroTel, float $delta): void
     {
         $ancien = $this->dernierSolde($idNumeroTel);
