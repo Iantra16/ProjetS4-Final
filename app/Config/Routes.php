@@ -41,4 +41,11 @@ $routes->group('admin', function ($routes) {
     $routes->get('prefixes/modifier/(:num)', 'Admin\PrefixeController::modifier/$1');
     $routes->post('prefixes/mettreAJour/(:num)', 'Admin\PrefixeController::mettreAJour/$1');
     $routes->get('prefixes/supprimer/(:num)', 'Admin\PrefixeController::supprimer/$1');
+
+    // Comptes clients
+    $routes->get('comptes', 'Admin\CompteController::index');
+    $routes->get('comptes/(:num)', 'Admin\CompteController::afficher/$1');
+
+    // Rapport gains
+    $routes->get('rapport/gains', 'Admin\RapportController::gains');
 });

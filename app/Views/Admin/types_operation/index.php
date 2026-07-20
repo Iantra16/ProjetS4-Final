@@ -10,7 +10,6 @@
 <table class="table table-bordered table-striped">
     <thead class="table-dark">
         <tr>
-            <th>#</th>
             <th>Nom</th>
             <th>Actions</th>
         </tr>
@@ -21,7 +20,6 @@
         <?php else: ?>
             <?php foreach ($types as $t): ?>
                 <tr>
-                    <td><?= esc($t['id']) ?></td>
                     <td><?= esc(ucfirst($t['nom'])) ?></td>
                     <td>
                         <a href="/admin/types-operation/modifier/<?= $t['id'] ?>" class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></a>

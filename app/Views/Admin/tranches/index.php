@@ -10,7 +10,6 @@
 <table class="table table-bordered table-striped">
     <thead class="table-dark">
         <tr>
-            <th></th>
             <th>Type</th>
             <th>Montant Min</th>
             <th>Montant Max</th>
@@ -24,7 +23,6 @@
         <?php else: ?>
             <?php foreach ($tranches as $t): ?>
                 <tr>
-                    <td><?= esc($t['id']) ?></td>
                     <td><?= esc(ucfirst($t['type_nom'])) ?></td>
                     <td><?= number_format($t['montant_min'], 0, ',', ' ') ?></td>
                     <td><?= number_format($t['montant_max'], 0, ',', ' ') ?></td>
