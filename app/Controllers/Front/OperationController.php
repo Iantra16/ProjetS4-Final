@@ -109,48 +109,35 @@ class OperationController extends BaseController
         }
 
         // Transfert : frais selon tranche, destinataire obligatoire
-        if ($typeNom === 'transfert' || $typeNom === 'transfert_multiple') {
+        if ($typeNom === 'transfert') {
             $inclureFrais = $this->request->getPost('inclure_frais') === 'on';
             $db = \Config\Database::connect();
             $db->transStart();
 
-            if ($typeNom === 'transfert') {
-                if (empty($numeroDest)) {
-                    $db->transRollback();
-                    return redirect()->back()->withInput()->with('error', 'Veuillez saisir le numéro du destinataire.');
-                }
-                if ($numeroDest === session()->get('numero')) {
-                    $db->transRollback();
-                    return redirect()->back()->withInput()->with('error', 'Vous ne pouvez pas vous envoyer de l\'argent.');
-                }
-                $destinataire = $numeroModel->trouverParNumero($numeroDest);
-                if (!$destinataire) {
-                    $db->transRollback();
-                    return redirect()->back()->withInput()->with('error', "Le numéro {$numeroDest} n'existe pas.");
-                }
-                $numeros = [$numeroDest];
-                $montants = [$montant];
-            } else {
-                $numeros = $this->request->getPost('numero_dest');
-                $montantGlobal = (float)$this->request->getPost('montant');
-                $nbDest = count(array_filter($numeros));
-                if ($nbDest === 0) {
-                    $db->transRollback();
-                    return redirect()->back()->withInput()->with('error', 'Au moins un destinataire est requis.');
-                }
-                $montParDest = $montantGlobal / $nbDest;
-                $montants = array_fill(0, count($numeros), $montParDest);
-            }
+            $numeros = array_filter($this->request->getPost('numero_dest'), fn($n) => !empty(trim($n)));
+            $montantGlobal = (float)$this->request->getPost('montant');
+            $nbDest = count($numeros);
 
+            if ($nbDest === 0) {
+                $db->transRollback();
+                return redirect()->back()->withInput()->with('error', 'Au moins un destinataire est requis.');
+            }
+            
+            $montParDest = $montantGlobal / $nbDest;
+            
             $montantTotal = 0;
             $operateurCommuns = null;
 
-            for ($i = 0; $i < count($numeros); $i++) {
-                if (empty(trim($numeros[$i]))) continue;
+            for ($i = 0; $i < $nbDest; $i++) {
                 $num = trim($numeros[$i]);
-                $mont = (float)$montants[$i];
+                $mont = $montParDest;
                 $dest = $numeroModel->trouverParNumero($num);
                 $opDest = $numeroModel->operateurDuNumero($num);
+
+                if (!$dest) {
+                    $db->transRollback();
+                    return redirect()->back()->withInput()->with('error', "Le numéro {$num} n'existe pas.");
+                }
 
                 if ($operateurCommuns === null) $operateurCommuns = $opDest['id'];
                 else if ($operateurCommuns !== $opDest['id']) {

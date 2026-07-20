@@ -5,7 +5,7 @@
 <div class="row justify-content-center">
   <div class="col-md-10">
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <h3><i class="bi bi-clock-history"></i> Mon historique</h3>
+      <h3>Mon historique</h3>
       <a href="/client/solde" class="btn btn-outline-secondary btn-sm">Retour</a>
     </div>
 
@@ -40,7 +40,7 @@
             <input type="date" name="date_fin" class="form-control form-control-sm" value="<?= esc($filters['date_fin'] ?? '') ?>">
           </div>
           <div class="col-md-1 d-grid">
-            <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search"></i></button>
+            <button type="submit" class="btn btn-primary btn-sm">Filtrer</button>
           </div>
         </form>
       </div>

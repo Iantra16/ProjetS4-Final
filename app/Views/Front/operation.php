@@ -6,7 +6,7 @@
   <div class="col-md-7">
     <div class="card shadow-sm">
       <div class="card-body p-4">
-        <h3 class="mb-3"><i class="bi bi-arrow-left-right text-primary"></i> Effectuer une opération</h3>
+        <h3 class="mb-3">Effectuer une opération</h3>
 
         <p class="text-muted">Solde actuel : <strong><?= number_format($solde['montant'] ?? 0, 0, ',', ' ') ?> Ar</strong></p>
 
@@ -17,15 +17,14 @@
             <label for="type_operation" class="form-label">Type d'opération</label>
             <select class="form-select" id="type_operation" name="type_operation" required>
               <option value="">-- Choisir --</option>
-              <option value="depot">Dépôt</option>
-              <option value="retrait">Retrait</option>
-              <option value="transfert">Transfert (unique)</option>
-              <option value="transfert_multiple">Transfert (multiple)</option>
+              <?php foreach ($types as $type): ?>
+                <option value="<?= esc($type['nom']) ?>"><?= ucfirst(esc($type['nom'])) ?></option>
+              <?php endforeach; ?>
             </select>
           </div>
 
-          <div class="mb-3" id="zoneMontantGlobal">
-            <label for="montant" class="form-label">Montant (F)</label>
+          <div class="mb-3" id="zoneMontantGlobal" style="display:none;">
+            <label for="montant" class="form-label">Montant global (Ar)</label>
             <input type="number" class="form-control" id="montant" name="montant"
                    min="1" step="any" value="<?= old('montant') ?>">
           </div>
@@ -65,7 +64,7 @@
 
           <div class="d-flex gap-2 mt-3">
             <button type="submit" class="btn btn-primary" id="btnValider" disabled>
-              <i class="bi bi-check-lg"></i> Confirmer
+              Confirmer
             </button>
             <a href="/client/solde" class="btn btn-outline-secondary">Annuler</a>
           </div>
@@ -88,17 +87,16 @@ document.getElementById('type_operation').addEventListener('change', function() 
     const zoneBareme = document.getElementById('zoneBareme');
     const zoneInclureFrais = document.getElementById('zoneInclureFrais');
 
-    zoneDest.style.display = (type === 'transfert' || type === 'transfert_multiple') ? 'block' : 'none';
-    zoneMontant.style.display = (type === 'transfert_multiple') ? 'none' : 'block';
-    // Ajout d'un champ montant global spécifique pour transfert multiple si nécessaire
-    // ou simplement réutiliser le champ montant existant
-    if (type === 'transfert_multiple') {
-        zoneMontant.style.display = 'block';
-    }
-    btnAjouter.style.display = (type === 'transfert_multiple') ? 'block' : 'none';
+    // Montant visible seulement si type est choisi
+    zoneMontant.style.display = (type !== '') ? 'block' : 'none';
+    
+    // Destinataires visibles seulement si transfert
+    zoneDest.style.display = (type === 'transfert') ? 'block' : 'none';
+    btnAjouter.style.display = (type === 'transfert') ? 'block' : 'none';
+    
     zoneFrais.style.display = (type !== 'depot' && type !== '') ? 'block' : 'none';
     zoneBareme.style.display = (type !== 'depot' && type !== '') ? 'block' : 'none';
-    zoneInclureFrais.style.display = (type === 'transfert' || type === 'transfert_multiple') ? 'block' : 'none';
+    zoneInclureFrais.style.display = (type === 'transfert') ? 'block' : 'none';
 
     // Activer/désactiver le bouton selon le type
     document.getElementById('btnValider').disabled = (type === '');
