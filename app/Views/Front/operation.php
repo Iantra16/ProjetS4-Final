@@ -129,7 +129,8 @@ document.getElementById('btnAjouterDest').addEventListener('click', function() {
 // Helper functions (chargerTranches, afficherTranches, calculerFrais, formatMontant, etc.)
 
 function chargerTranches(typeNom) {
-    const type = typesData.find(t => t.nom === typeNom);
+    const nomReel = (typeNom === 'transfert_multiple' ? 'transfert' : typeNom);
+    const type = typesData.find(t => t.nom === nomReel);
     if (!type) return;
 
     if (tranchesCache[type.id]) {
@@ -170,15 +171,27 @@ function calculerFrais() {
         return;
     }
 
-    const montant = parseFloat(document.getElementById('montant').value) || 0;
+    const montantGlobal = parseFloat(document.getElementById('montant').value) || 0;
     const typeObj = typesData.find(t => t.nom === (type === 'transfert_multiple' ? 'transfert' : type));
     if (!typeObj || !tranchesCache[typeObj.id]) return;
 
-    const tranche = tranchesCache[typeObj.id].find(t => montant >= t.montant_min && montant <= t.montant_max);
-    const frais = tranche ? parseFloat(tranche.montant_frais) : 0;
+    let montantParTransfert = montantGlobal;
+    let nbDestinataires = 1;
 
-    document.getElementById('affichageFrais').textContent = formatMontant(frais);
-    document.getElementById('affichageTotal').textContent = formatMontant(montant + frais);
+    if (type === 'transfert_multiple') {
+        const numeros = document.querySelectorAll('.numero-dest');
+        let count = 0;
+        numeros.forEach(input => { if(input.value.trim() !== '') count++; });
+        nbDestinataires = count > 0 ? count : 1;
+        montantParTransfert = montantGlobal / nbDestinataires;
+    }
+
+    const tranche = tranchesCache[typeObj.id].find(t => montantParTransfert >= t.montant_min && montantParTransfert <= t.montant_max);
+    const fraisParTransfert = tranche ? parseFloat(tranche.montant_frais) : 0;
+    const fraisTotal = fraisParTransfert * nbDestinataires;
+
+    document.getElementById('affichageFrais').textContent = formatMontant(fraisTotal);
+    document.getElementById('affichageTotal').textContent = formatMontant(montantGlobal + fraisTotal);
 }
 
 function formatMontant(val) {
