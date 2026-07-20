@@ -15,13 +15,14 @@ class CompteController extends BaseController
         $recherche = $this->request->getGet('q') ?: null;
 
         $builder = $model->db->table('numero_telephone nt')
-            ->select('nt.id, nt.numero, po.nom as operateur, s.montant as solde_actuel, s.date as date_solde')
+            ->select('nt.id, nt.numero, op.nom as operateur, s.montant as solde_actuel, s.date as date_solde')
             ->join('prefixe_operateur po', 'po.id = nt.id_prefixe')
+            ->join('operateur op', 'op.id = po.id_operateur')
             ->join('solde s', 's.id = (SELECT id FROM solde WHERE id_numero_tel = nt.id ORDER BY id DESC LIMIT 1)', 'left');
         if ($recherche) {
             $builder->groupStart()
                 ->like('nt.numero', $recherche)
-                ->orLike('po.nom', $recherche)
+                ->orLike('op.nom', $recherche)
             ->groupEnd();
         }
         $data['comptes'] = $builder->orderBy('nt.id', 'ASC')->get()->getResultArray();
