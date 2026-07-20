@@ -8,6 +8,17 @@ class MobileMoneySeeder extends Seeder
 {
     public function run()
     {
+        // Nettoyage avant insertion - ordre inverse des dépendances pour respecter les FK
+        $this->db->disableForeignKeyChecks();
+        $this->db->table('operation')->emptyTable();
+        $this->db->table('solde')->emptyTable();
+        $this->db->table('numero_telephone')->emptyTable();
+        $this->db->table('tranches_frais')->emptyTable();
+        $this->db->table('type_operation')->emptyTable();
+        $this->db->table('prefixe_operateur')->emptyTable();
+        // Ne pas vider operateur ici, c'est le rôle de V2Seeder ou une autre logique
+        $this->db->enableForeignKeyChecks();
+
         // prefixe_operateur
         $this->db->table('prefixe_operateur')->insertBatch([
             ['prefixe' => '033', 'nom' => 'Airtel Money'],

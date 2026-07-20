@@ -8,6 +8,12 @@ class V2Seeder extends Seeder
 {
     public function run()
     {
+        // Nettoyage avant insertion
+        $this->db->disableForeignKeyChecks();
+        $this->db->table('operateur')->emptyTable();
+        // Optionnel : $this->db->table('solde')->emptyTable(); // Attention : cela supprime les soldes V1
+        $this->db->enableForeignKeyChecks();
+
         // 1. Ajouter les opérateurs
         $this->db->table('operateur')->insertBatch([
             ['nom' => 'Telma', 'est_notre_operateur' => 1, 'commission_exterieur' => 0.0],
