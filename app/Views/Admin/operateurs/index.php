@@ -1,4 +1,4 @@
-<?= $this->extend('layout') ?>
+<?= $this->extend('layout/admin') ?>
 <?= $this->section('content') ?>
 <h1>Gestion des opérateurs</h1>
 <a href="/admin/operateurs/nouveau" class="btn btn-primary">Nouvel opérateur</a>

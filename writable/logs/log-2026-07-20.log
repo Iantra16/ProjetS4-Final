@@ -485,3 +485,4 @@ in SYSTEMPATH/Exceptions/FrameworkException.php on line 39.
 10 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
 11 SYSTEMPATH/rewrite.php(44): require_once('/opt/lampp/htdocs/MY_htdocs/S4/System D\'informatoin/ProjetS4-Final/public/index.php')
 DEBUG - 2026-07-20 12:54:43 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-20 12:57:27 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.

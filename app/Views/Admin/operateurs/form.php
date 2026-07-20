@@ -1,4 +1,4 @@
-<?= $this->extend('layout') ?>
+<?= $this->extend('layout/admin') ?>
 <?= $this->section('content') ?>
 <h1><?= isset($operateur) ? 'Modifier' : 'Nouvel' ?> opérateur</h1>
 <form action="/admin/operateurs/<?= isset($operateur) ? 'mettreAJour/'.$operateur['id'] : 'creer' ?>" method="post">
