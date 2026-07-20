@@ -54,11 +54,9 @@ $routes->group('admin', function ($routes) {
 
 $routes->group('client', ['filter' => 'client'], function($routes) {
     $routes->get('solde', 'Front\CompteClientController::solde');
-    $routes->get('depot', 'Front\OperationController::depot');
-    $routes->post('depot', 'Front\OperationController::depot');
-    $routes->get('retrait', 'Front\OperationController::retrait');
-    $routes->post('retrait', 'Front\OperationController::retrait');
-    $routes->get('transfert', 'Front\OperationController::transfert');
-    $routes->post('transfert', 'Front\OperationController::transfert');
+    $routes->get('operation', 'Front\OperationController::operation');
+    $routes->post('operation', 'Front\OperationController::enregistrer');
     $routes->get('historique', 'Front\OperationController::historique');
+    $routes->get('tranches-json', 'Front\OperationController::tranchesJson');
+    $routes->get('numero-existe-json', 'Front\OperationController::numeroExisteJson');
 });
