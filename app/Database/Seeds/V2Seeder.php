@@ -39,14 +39,41 @@ class V2Seeder extends Seeder
                 ->update(['id_operateur' => $idOperateur]);
         }
 
-        // 3. Ajouter des fonds aux comptes de test pour V2
-        // id 1: 0331234567, id 2: 0339876543, id 3: 0371112233, id 4: 0374445566, id 5: 0347778899
-        $this->db->table('solde')->insertBatch([
-            ['id_numero_tel' => 1, 'montant' => 500000, 'date' => date('Y-m-d H:i:s')],
-            ['id_numero_tel' => 2, 'montant' => 500000, 'date' => date('Y-m-d H:i:s')],
-            ['id_numero_tel' => 3, 'montant' => 500000, 'date' => date('Y-m-d H:i:s')],
-            ['id_numero_tel' => 4, 'montant' => 500000, 'date' => date('Y-m-d H:i:s')],
-            ['id_numero_tel' => 5, 'montant' => 1000000, 'date' => date('Y-m-d H:i:s')],
-        ]);
+        // 3. Numéros de test supplémentaires pour tester l'envoi multiple (même opérateur)
+        $prefixeId = [];
+        foreach (['033', '037', '034'] as $p) {
+            $row = $this->db->table('prefixe_operateur')->where('prefixe', $p)->get()->getRow();
+            $prefixeId[$p] = $row ? $row->id : null;
+        }
+        $testNumeros = [
+            '0331111111', '0332222222', '0333333333', // Airtel
+            '0375555555', '0376666666', '0377777777', // Orange
+            '0348888888', '0349999999',               // Telma
+        ];
+        $nouveauxIds = [];
+        foreach ($testNumeros as $num) {
+            if (!$this->db->table('numero_telephone')->where('numero', $num)->countAllResults()) {
+                $this->db->table('numero_telephone')->insert([
+                    'id_prefixe'    => $prefixeId[substr($num, 0, 3)],
+                    'numero'        => $num,
+                    'date_creation' => date('Y-m-d H:i:s'),
+                ]);
+                $nouveauxIds[] = $this->db->insertID();
+            }
+        }
+
+        // 4. Ajouter des fonds à tous les comptes de test (V2 + nouveaux)
+        // Comptes V2 de base : id 1 à 5 (créés par MobileMoneySeeder)
+        $allIds = [1, 2, 3, 4, 5];
+        $allIds = array_merge($allIds, $nouveauxIds);
+        $soldes = [];
+        foreach ($allIds as $id) {
+            $soldes[] = [
+                'id_numero_tel' => $id,
+                'montant'       => 500000,
+                'date'          => date('Y-m-d H:i:s'),
+            ];
+        }
+        $this->db->table('solde')->insertBatch($soldes);
     }
 }

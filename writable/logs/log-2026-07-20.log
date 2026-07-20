@@ -1538,3 +1538,51 @@ in SYSTEMPATH/Database/SQLite3/Connection.php on line 163.
 11 SYSTEMPATH/Boot.php(442): CodeIgniter\CLI\Console->run()
 12 SYSTEMPATH/Boot.php(166): CodeIgniter\Boot::runCommand()
 13 ROOTPATH/spark(87): CodeIgniter\Boot::bootSpark()
+CRITICAL - 2026-07-20 18:58:45 --> ErrorException: fwrite(): Write of 25 bytes failed with errno=32 Broken pipe
+[Method: CLI, Route: db:seed/V2Seeder]
+in SYSTEMPATH/CLI/InputOutput.php on line 78.
+ 1 [internal function]: CodeIgniter\Debug\Exceptions->errorHandler()
+ 2 SYSTEMPATH/CLI/InputOutput.php(78): fwrite()
+ 3 SYSTEMPATH/CLI/CLI.php(1126): CodeIgniter\CLI\InputOutput->fwrite()
+ 4 SYSTEMPATH/CLI/CLI.php(465): CodeIgniter\CLI\CLI::fwrite()
+ 5 APPPATH/Views/errors/cli/error_exception.php(39): CodeIgniter\CLI\CLI::write()
+ 6 SYSTEMPATH/CLI/BaseCommand.php(133): require('/home/iantra/Documents/My_Docs/S4/SI/ProjetS4-Final/app/Views/errors/cli/error_exception.php')
+ 7 SYSTEMPATH/Commands/Database/Seed.php(81): CodeIgniter\CLI\BaseCommand->showError()
+ 8 SYSTEMPATH/CLI/Commands.php(74): CodeIgniter\Commands\Database\Seed->run()
+ 9 SYSTEMPATH/CLI/Console.php(47): CodeIgniter\CLI\Commands->run()
+10 SYSTEMPATH/Boot.php(442): CodeIgniter\CLI\Console->run()
+11 SYSTEMPATH/Boot.php(166): CodeIgniter\Boot::runCommand()
+12 ROOTPATH/spark(87): CodeIgniter\Boot::bootSpark()
+CRITICAL - 2026-07-20 18:58:45 --> ErrorException: Uncaught ErrorException: fwrite(): Write of 17 bytes failed with errno=32 Broken pipe in /home/iantra/Documents/My_Docs/S4/SI/ProjetS4-Final/system/CLI/InputOutput.php:78
+Stack trace:
+#0 [internal function]: CodeIgniter\Debug\Exceptions->errorHandler()
+#1 /home/iantra/Documents/My_Docs/S4/SI/ProjetS4-Final/system/CLI/InputOutput.php(78): fwrite()
+#2 /home/iantra/Documents/My_Docs/S4/SI/ProjetS4-Final/system/CLI/CLI.php(1126): CodeIgniter\CLI\InputOutput->fwrite()
+#3 /home/iantra/Documents/My_Docs/S4/SI/ProjetS4-Final/system/CLI/CLI.php(465): CodeIgniter\CLI\CLI::fwrite()
+#4 /home/iantra/Documents/My_Docs/S4/SI/ProjetS4-Final/app/Views/errors/cli/error_exception.php(6): CodeIgniter\CLI\CLI::write()
+#5 /home/iantra/Documents/My_Docs/S4/SI/ProjetS4-Final/system/Debug/BaseExceptionHandler.php(270): include('...')
+#6 /home/iantra/Documents/My_Docs/S4/SI/ProjetS4-Final/system/Debug/BaseExceptionHandler.php(273): CodeIgniter\Debug\BaseExceptionHandler->CodeIgniter\Debug\{closure}()
+#7 /home/iantra/Documents/My_Docs/S4/SI/ProjetS4-Final/system/Debug/ExceptionHandler.php(126): CodeIgniter\Debug\BaseExceptionHandler->render()
+#8 /home/iantra/Documents/My_Docs/S4/SI/ProjetS4-Final/system/Debug/Exceptions.php(151): CodeIgniter\Debug\ExceptionHandler->handle()
+#9 [internal function]: CodeIgniter\Debug\Exceptions->exceptionHandler()
+#10 {main}
+  thrown
+【Previous Exception】
+ErrorException
+fwrite(): Write of 25 bytes failed with errno=32 Broken pipe
+#0 [internal function]: CodeIgniter\Debug\Exceptions->errorHandler()
+#1 /home/iantra/Documents/My_Docs/S4/SI/ProjetS4-Final/system/CLI/InputOutput.php(78): fwrite()
+#2 /home/iantra/Documents/My_Docs/S4/SI/ProjetS4-Final/system/CLI/CLI.php(1126): CodeIgniter\CLI\InputOutput->fwrite()
+#3 /home/iantra/Documents/My_Docs/S4/SI/ProjetS4-Final/system/CLI/CLI.php(465): CodeIgniter\CLI\CLI::fwrite()
+#4 /home/iantra/Documents/My_Docs/S4/SI/ProjetS4-Final/app/Views/errors/cli/error_exception.php(39): CodeIgniter\CLI\CLI::write()
+#5 /home/iantra/Documents/My_Docs/S4/SI/ProjetS4-Final/system/CLI/BaseCommand.php(133): require('...')
+#6 /home/iantra/Documents/My_Docs/S4/SI/ProjetS4-Final/system/Commands/Database/Seed.php(81): CodeIgniter\CLI\BaseCommand->showError()
+#7 /home/iantra/Documents/My_Docs/S4/SI/ProjetS4-Final/system/CLI/Commands.php(74): CodeIgniter\Commands\Database\Seed->run()
+#8 /home/iantra/Documents/My_Docs/S4/SI/ProjetS4-Final/system/CLI/Console.php(47): CodeIgniter\CLI\Commands->run()
+#9 /home/iantra/Documents/My_Docs/S4/SI/ProjetS4-Final/system/Boot.php(442): CodeIgniter\CLI\Console->run()
+#10 /home/iantra/Documents/My_Docs/S4/SI/ProjetS4-Final/system/Boot.php(166): CodeIgniter\Boot::runCommand()
+#11 /home/iantra/Documents/My_Docs/S4/SI/ProjetS4-Final/spark(87): CodeIgniter\Boot::bootSpark()
+#12 {main}
+[Method: CLI, Route: db:seed/V2Seeder]
+in SYSTEMPATH/CLI/InputOutput.php on line 78.
+ 1 [internal function]: CodeIgniter\Debug\Exceptions->shutdownHandler()
