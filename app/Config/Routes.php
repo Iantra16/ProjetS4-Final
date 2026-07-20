@@ -18,6 +18,14 @@ $routes->group('admin', function ($routes) {
  
 
 
+    // CRUD Tranches Frais
+    $routes->get('tranches', 'Admin\TrancheFraisController::index');
+    $routes->get('tranches/nouveau', 'Admin\TrancheFraisController::nouveau');
+    $routes->post('tranches/creer', 'Admin\TrancheFraisController::creer');
+    $routes->get('tranches/modifier/(:num)', 'Admin\TrancheFraisController::modifier/$1');
+    $routes->post('tranches/mettreAJour/(:num)', 'Admin\TrancheFraisController::mettreAJour/$1');
+    $routes->get('tranches/supprimer/(:num)', 'Admin\TrancheFraisController::supprimer/$1');
+
     // CRUD Type Opération
     $routes->get('types-operation', 'Admin\TypeOperationController::index');
     $routes->get('types-operation/nouveau', 'Admin\TypeOperationController::nouveau');
