@@ -23,7 +23,7 @@
       <li class="nav-item"><a class="nav-link text-white" href="/admin/rapport/gains">Gains</a></li>
       <li class="nav-item"><a class="nav-link text-white" href="/admin/rapport/montants-a-envoyer">Montants à envoyer</a></li>
     </ul>
-    <form method="POST" action="/logout" class="mt-4">
+    <form method="POST" action="/client/logout" class="mt-4">
       <?= csrf_field() ?>
       <button class="btn btn-outline-light btn-sm w-100">Déconnexion</button>
     </form>

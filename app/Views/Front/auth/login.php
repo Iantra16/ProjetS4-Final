@@ -7,7 +7,6 @@
       <div class="card-body p-4">
 
         <div class="text-center mb-4">
-          <i class="bi bi-phone fs-1 text-primary"></i>
           <h4 class="mt-2 mb-0">Espace Client</h4>
           <p class="text-muted small">Entrez votre numéro pour accéder à votre compte</p>
         </div>
@@ -25,7 +24,6 @@
           <div class="mb-3">
             <label for="numero" class="form-label fw-semibold">Numéro de téléphone</label>
             <div class="input-group">
-              <span class="input-group-text"><i class="bi bi-telephone"></i></span>
               <input
                 type="text"
                 name="numero"
@@ -45,7 +43,7 @@
 
           <div class="d-grid mt-4">
             <button type="submit" class="btn btn-primary btn-lg">
-              <i class="bi bi-box-arrow-in-right me-1"></i> Accéder à mon compte
+              Accéder à mon compte
             </button>
           </div>
         </form>
