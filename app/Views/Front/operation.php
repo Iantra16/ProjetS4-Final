@@ -36,10 +36,6 @@
                 <label class="form-label">Numéro destinataire</label>
                 <input type="text" class="form-control numero-dest" name="numero_dest[]" maxlength="10" placeholder="Ex: 0331234567">
               </div>
-              <div class="mb-3">
-                <label class="form-label">Montant (F)</label>
-                <input type="number" class="form-control montant-dest" name="montant_dest[]" min="1" step="any">
-              </div>
             </div>
           </div>
           
@@ -94,6 +90,11 @@ document.getElementById('type_operation').addEventListener('change', function() 
 
     zoneDest.style.display = (type === 'transfert' || type === 'transfert_multiple') ? 'block' : 'none';
     zoneMontant.style.display = (type === 'transfert_multiple') ? 'none' : 'block';
+    // Ajout d'un champ montant global spécifique pour transfert multiple si nécessaire
+    // ou simplement réutiliser le champ montant existant
+    if (type === 'transfert_multiple') {
+        zoneMontant.style.display = 'block';
+    }
     btnAjouter.style.display = (type === 'transfert_multiple') ? 'block' : 'none';
     zoneFrais.style.display = (type !== 'depot' && type !== '') ? 'block' : 'none';
     zoneBareme.style.display = (type !== 'depot' && type !== '') ? 'block' : 'none';
@@ -121,7 +122,6 @@ document.getElementById('btnAjouterDest').addEventListener('click', function() {
     div.id = newId;
     div.innerHTML = `
         <div class="mb-3"><label class="form-label">Numéro destinataire</label><input type="text" class="form-control numero-dest" name="numero_dest[]" maxlength="10" placeholder="Ex: 0331234567"></div>
-        <div class="mb-3"><label class="form-label">Montant (F)</label><input type="number" class="form-control montant-dest" name="montant_dest[]" min="1" step="any"></div>
     `;
     container.appendChild(div);
 });

@@ -128,13 +128,21 @@ class OperationController extends BaseController
                 $montants = [$montant];
             } else {
                 $numeros = $this->request->getPost('numero_dest');
-                $montants = $this->request->getPost('montant_dest');
+                $montantGlobal = (float)$this->request->getPost('montant');
+                $nbDest = count(array_filter($numeros));
+                if ($nbDest === 0) {
+                    $db->transRollback();
+                    return redirect()->back()->withInput()->with('error', 'Au moins un destinataire est requis.');
+                }
+                $montParDest = $montantGlobal / $nbDest;
+                $montants = array_fill(0, count($numeros), $montParDest);
             }
 
             $montantTotal = 0;
             $operateurCommuns = null;
 
             for ($i = 0; $i < count($numeros); $i++) {
+                if (empty(trim($numeros[$i]))) continue;
                 $num = trim($numeros[$i]);
                 $mont = (float)$montants[$i];
                 $dest = $numeroModel->trouverParNumero($num);
