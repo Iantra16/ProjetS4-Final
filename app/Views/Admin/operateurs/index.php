@@ -17,8 +17,13 @@
     </thead>
     <tbody>
         <?php foreach ($operateurs as $op): ?>
-        <tr>
-            <td><?= esc($op['nom']) ?></td>
+        <tr class="<?= $op['est_notre_operateur'] ? 'table-success' : '' ?>">
+            <td>
+                <?= esc($op['nom']) ?>
+                <?php if ($op['est_notre_operateur']): ?>
+                    <span class="badge bg-primary ms-2">Notre Opérateur</span>
+                <?php endif; ?>
+            </td>
             <td><?= esc($op['commission_exterieur'] * 100) ?>%</td>
             <td>
                 <a href="/admin/operateurs/modifier/<?= $op['id'] ?>" class="btn btn-sm btn-warning">Modifier</a>
