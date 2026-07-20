@@ -28,8 +28,14 @@ class V2Seeder extends Seeder
         // ID 3: Orange
 
         // Re-mapping based on ID 1=Telma, 2=Airtel, 3=Orange:
-        $this->db->query("UPDATE prefixe_operateur SET id_operateur = 1 WHERE prefixe = '034'");
-        $this->db->query("UPDATE prefixe_operateur SET id_operateur = 2 WHERE prefixe = '033'");
-        $this->db->query("UPDATE prefixe_operateur SET id_operateur = 3 WHERE prefixe = '037'");
+        // 3. Ajouter des fonds aux comptes de test pour V2
+        // id 1: 0331234567, id 2: 0339876543, id 3: 0371112233, id 4: 0374445566, id 5: 0347778899
+        $this->db->table('solde')->insertBatch([
+            ['id_numero_tel' => 1, 'montant' => 500000, 'date' => date('Y-m-d H:i:s')],
+            ['id_numero_tel' => 2, 'montant' => 500000, 'date' => date('Y-m-d H:i:s')],
+            ['id_numero_tel' => 3, 'montant' => 500000, 'date' => date('Y-m-d H:i:s')],
+            ['id_numero_tel' => 4, 'montant' => 500000, 'date' => date('Y-m-d H:i:s')],
+            ['id_numero_tel' => 5, 'montant' => 1000000, 'date' => date('Y-m-d H:i:s')],
+        ]);
     }
 }

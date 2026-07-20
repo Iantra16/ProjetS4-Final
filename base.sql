@@ -1,17 +1,28 @@
 -- ============================================================
 --  Base SQLite - ProjetS4
---  Créé le : 2026-07-20
 -- ============================================================
 
 PRAGMA foreign_keys = ON;
 
 -- ------------------------------------------------------------
+-- Table : operateur
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS operateur (
+    id                   INTEGER PRIMARY KEY AUTOINCREMENT,
+    nom                  TEXT    NOT NULL,
+    est_notre_operateur  BOOLEAN NOT NULL DEFAULT 0,
+    commission_exterieur REAL    NOT NULL DEFAULT 0.0
+);
+
+-- ------------------------------------------------------------
 -- Table : prefixe_operateur
 -- ------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS prefixe_operateur (
-    id      INTEGER PRIMARY KEY AUTOINCREMENT,
-    prefixe TEXT    NOT NULL UNIQUE,
-    nom     TEXT    NOT NULL
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    prefixe      TEXT    NOT NULL UNIQUE,
+    nom          TEXT    NOT NULL,
+    id_operateur INTEGER,
+    FOREIGN KEY (id_operateur) REFERENCES operateur(id)
 );
 
 -- ------------------------------------------------------------
@@ -69,10 +80,11 @@ CREATE TABLE IF NOT EXISTS tranches_frais (
 CREATE TABLE IF NOT EXISTS operation (
     id                  INTEGER  PRIMARY KEY AUTOINCREMENT,
     id_type_operation   INTEGER  NOT NULL,
-    id_numero_tel       INTEGER  NOT NULL,  -- compte "source" (celui qui initie)
-    id_numero_tel_dest  INTEGER,            -- NULL sauf pour un transfert
+    id_numero_tel       INTEGER  NOT NULL,
+    id_numero_tel_dest  INTEGER,
     montant             REAL     NOT NULL,
     frais               REAL     NOT NULL DEFAULT 0.0,
+    commission          REAL     NOT NULL DEFAULT 0.0,
     date                DATETIME NOT NULL DEFAULT (DATETIME('now')),
     FOREIGN KEY (id_type_operation) REFERENCES type_operation(id)
         ON UPDATE CASCADE ON DELETE RESTRICT,
@@ -85,17 +97,18 @@ CREATE TABLE IF NOT EXISTS operation (
     CHECK (id_numero_tel_dest IS NULL OR id_numero_tel_dest != id_numero_tel)
 );
 
-
-
-
 -- ============================================================
---  Données de test - ProjetS4 Mobile Money
+--  Données V2
 -- ============================================================
+INSERT INTO operateur (nom, est_notre_operateur, commission_exterieur) VALUES
+('Telma', 1, 0.0),
+('Airtel', 0, 0.02),
+('Orange', 0, 0.02);
 
-INSERT INTO prefixe_operateur (prefixe, nom) VALUES
-('033', 'Airtel Money'),
-('037', 'Orange Money'),
-('034', 'Telma Mvola');
+INSERT INTO prefixe_operateur (prefixe, nom, id_operateur) VALUES
+('033', 'Airtel Money', 2),
+('037', 'Orange Money', 3),
+('034', 'Telma Mvola', 1);
 
 INSERT INTO type_operation (nom) VALUES
 ('depot'),
@@ -125,42 +138,3 @@ INSERT INTO tranches_frais (id_type_operation, montant_min, montant_max, montant
 (3, 100001, 250000,  3000),
 (3, 250001, 500000,  3000),
 (3, 500001, 1000000, 5000);
-
-INSERT INTO numero_telephone (id_prefixe, numero, date_creation) VALUES
-(1, '0331234567', '2026-07-01 08:00:00'),  -- Airtel
-(1, '0339876543', '2026-07-02 09:15:00'),  -- Airtel
-(2, '0371112233', '2026-07-01 10:00:00'),  -- Orange
-(2, '0374445566', '2026-07-03 14:30:00'),  -- Orange
-(3, '0347778899', '2026-07-04 16:00:00');  -- Telma
-
-INSERT INTO solde (id_numero_tel, montant, date) VALUES
-(1, 0,       '2026-07-01 08:00:00'),   -- création compte 1
-(1, 50000,   '2026-07-05 10:00:00'),   -- après dépôt
-(2, 0,       '2026-07-02 09:15:00'),
-(2, 120000,  '2026-07-06 11:00:00'),
-(3, 0,       '2026-07-01 10:00:00'),
-(3, 30000,   '2026-07-04 15:00:00'),
-(4, 0,       '2026-07-03 14:30:00'),
-(4, 15000,   '2026-07-07 09:00:00'),
-(5, 0,       '2026-07-04 16:00:00'),
-(5, 200000,  '2026-07-08 12:00:00');
-
--- Dépôts (frais = 0 selon ton exemple)
-INSERT INTO operation (id_type_operation, id_numero_tel, montant, frais, date) VALUES
-(1, 1, 50000, 0, '2026-07-05 10:00:00'),   -- dépôt compte 1
-(1, 2, 120000, 0, '2026-07-06 11:00:00'),  -- dépôt compte 2
-(1, 3, 30000, 0, '2026-07-04 15:00:00'),   -- dépôt compte 3
-(1, 4, 15000, 0, '2026-07-07 09:00:00'),   -- dépôt compte 4
-(1, 5, 200000, 0, '2026-07-08 12:00:00');  -- dépôt compte 5
-
--- Retrait : compte 1 retire 5000 → tranche retrait [1001-5000] = 50 Ar de frais
-INSERT INTO operation (id_type_operation, id_numero_tel, montant, frais, date) VALUES
-(2, 1, 5000, 50, '2026-07-09 08:30:00');
-
--- Transfert : compte 2 envoie 10000 vers compte 4 → tranche transfert [5001-10000] = 200 Ar de frais
-INSERT INTO operation (id_type_operation, id_numero_tel, id_numero_tel_dest, montant, frais, date) VALUES
-(3, 2, 4, 10000, 200, '2026-07-09 09:00:00');
-
--- Transfert : compte 5 envoie 25000 vers compte 3 → tranche transfert [10001-25000] = 400 Ar de frais
-INSERT INTO operation (id_type_operation, id_numero_tel, id_numero_tel_dest, montant, frais, date) VALUES
-(3, 5, 3, 25000, 400, '2026-07-09 09:30:00');

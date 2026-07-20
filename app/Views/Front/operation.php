@@ -83,7 +83,107 @@
 const typesData = <?= json_encode($typesJson) ?>;
 let tranchesCache = {};
 
-// ... (keep previous listeners)
+document.getElementById('type_operation').addEventListener('change', function() {
+    const type = this.value;
+    const zoneDest = document.getElementById('zoneDestinataires');
+    const zoneMontant = document.getElementById('zoneMontantGlobal');
+    const btnAjouter = document.getElementById('btnAjouterDest');
+    const zoneFrais = document.getElementById('zoneFrais');
+    const zoneBareme = document.getElementById('zoneBareme');
+    const zoneInclureFrais = document.getElementById('zoneInclureFrais');
+
+    zoneDest.style.display = (type === 'transfert' || type === 'transfert_multiple') ? 'block' : 'none';
+    zoneMontant.style.display = (type === 'transfert_multiple') ? 'none' : 'block';
+    btnAjouter.style.display = (type === 'transfert_multiple') ? 'block' : 'none';
+    zoneFrais.style.display = (type !== 'depot' && type !== '') ? 'block' : 'none';
+    zoneBareme.style.display = (type !== 'depot' && type !== '') ? 'block' : 'none';
+    zoneInclureFrais.style.display = (type === 'transfert') ? 'block' : 'none';
+
+    // Activer/désactiver le bouton selon le type
+    document.getElementById('btnValider').disabled = (type === '');
+    
+    if (type === 'depot' || type === '') {
+        document.getElementById('affichageFrais').textContent = '0';
+        document.getElementById('affichageTotal').textContent = document.getElementById('montant').value || '0';
+        document.getElementById('tableBareme').querySelector('tbody').innerHTML = '';
+    }
+
+    if (type && type !== 'depot') {
+        chargerTranches(type);
+    }
+});
+
+document.getElementById('btnAjouterDest').addEventListener('click', function() {
+    const container = document.getElementById('zoneDestinataires');
+    const newId = 'destinataire' + (container.children.length + 1);
+    const div = document.createElement('div');
+    div.className = 'destinataire-group';
+    div.id = newId;
+    div.innerHTML = `
+        <div class="mb-3"><label class="form-label">Numéro destinataire</label><input type="text" class="form-control numero-dest" name="numero_dest[]" maxlength="10" placeholder="Ex: 0331234567"></div>
+        <div class="mb-3"><label class="form-label">Montant (F)</label><input type="number" class="form-control montant-dest" name="montant_dest[]" min="1" step="any"></div>
+    `;
+    container.appendChild(div);
+});
+
+// Helper functions (chargerTranches, afficherTranches, calculerFrais, formatMontant, etc.)
+
+function chargerTranches(typeNom) {
+    const type = typesData.find(t => t.nom === typeNom);
+    if (!type) return;
+
+    if (tranchesCache[type.id]) {
+        afficherTranches(tranchesCache[type.id]);
+        calculerFrais();
+        return;
+    }
+
+    fetch('/client/tranches-json?type_id=' + type.id)
+        .then(r => r.json())
+        .then(data => {
+            tranchesCache[type.id] = data;
+            afficherTranches(data);
+            calculerFrais();
+        })
+        .catch(() => {
+            alert('Impossible de charger le barème des frais. Réessayez.');
+        });
+}
+
+function afficherTranches(tranches) {
+    const tbody = document.getElementById('tableBareme').querySelector('tbody');
+    tbody.innerHTML = '';
+    tranches.forEach(t => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = '<td>' + formatMontant(t.montant_min) + '</td><td>' + formatMontant(t.montant_max) + '</td><td>' + formatMontant(t.montant_frais) + '</td>';
+        tbody.appendChild(tr);
+    });
+}
+
+document.getElementById('montant').addEventListener('input', calculerFrais);
+
+function calculerFrais() {
+    const type = document.getElementById('type_operation').value;
+    if (type === 'depot' || !type || type === 'transfert_multiple') {
+        document.getElementById('affichageFrais').textContent = '0';
+        document.getElementById('affichageTotal').textContent = document.getElementById('montant').value || '0';
+        return;
+    }
+
+    const montant = parseFloat(document.getElementById('montant').value) || 0;
+    const typeObj = typesData.find(t => t.nom === type);
+    if (!typeObj || !tranchesCache[typeObj.id]) return;
+
+    const tranche = tranchesCache[typeObj.id].find(t => montant >= t.montant_min && montant <= t.montant_max);
+    const frais = tranche ? parseFloat(tranche.montant_frais) : 0;
+
+    document.getElementById('affichageFrais').textContent = formatMontant(frais);
+    document.getElementById('affichageTotal').textContent = formatMontant(montant + frais);
+}
+
+function formatMontant(val) {
+    return parseFloat(val).toLocaleString('fr-FR');
+}
 
 document.getElementById('formOperation').addEventListener('submit', async function(e) {
     const type = document.getElementById('type_operation').value;
@@ -114,7 +214,6 @@ document.getElementById('formOperation').addEventListener('submit', async functi
         }
     }
 });
-// ...
 </script>
 
 <?= $this->endSection() ?>
