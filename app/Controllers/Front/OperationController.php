@@ -49,7 +49,6 @@ class OperationController extends BaseController
     {
         $typeNom       = $this->request->getPost('type_operation');
         $montant       = (float) $this->request->getPost('montant');
-        $numeroDest    = trim((string) $this->request->getPost('numero_dest'));
         $idNumero      = session()->get('numero_id');
         $soldeModel    = new SoldeModel();
         $typeModel     = new TypeOperationModel();
@@ -151,19 +150,29 @@ class OperationController extends BaseController
 
                 $commission = (!$opDest['est_notre_operateur']) ? ($mont * $opDest['commission_exterieur']) : 0;
                 
-                $cout = $mont + ($inclureFrais ? $frais : 0);
+                // Logique "Inclure frais"
+                if ($inclureFrais) {
+                    $cout = $mont + $frais;
+                    $montantFinalEnvoye = $mont;
+                } else {
+                    $cout = $mont;
+                    $montantFinalEnvoye = $mont - $frais;
+                }
+                
                 $montantTotal += $cout;
 
                 $operationModel->insert([
                     'id_type_operation'  => $type['id'],
                     'id_numero_tel'      => $idNumero,
                     'id_numero_tel_dest' => $dest['id'],
-                    'montant'            => $mont,
+                    'montant'            => $montantFinalEnvoye,
                     'frais'              => $frais,
                     'commission'         => $commission,
                     'date'               => date('Y-m-d H:i:s'),
                 ]);
-                $soldeModel->insererNouveauSolde($dest['id'], $mont + $commission);
+                
+                // Destinataire reçoit montant + commission
+                $soldeModel->insererNouveauSolde($dest['id'], $montantFinalEnvoye + $commission);
             }
 
             if ($montantSolde < $montantTotal) {

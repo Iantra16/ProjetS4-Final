@@ -14,7 +14,7 @@
 
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
-      <a class="navbar-brand" href="/">Mon Site</a>
+      <a class="navbar-brand" href="/">Espace Client</a>
       <div class="d-flex align-items-center">
         <?php if (session()->get('numero_id')): ?>
           <a href="/client/solde" class="btn btn-outline-light btn-sm me-2">Mon solde</a>
@@ -44,7 +44,7 @@
   </main>
 
   <footer class="text-center text-muted py-3 mt-5 border-top">
-    &copy; <?= date('Y') ?> — Mon Site
+    &copy; <?= date('Y') ?> — Espace Client
   </footer>
 
 </body>

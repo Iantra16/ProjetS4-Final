@@ -47,8 +47,9 @@
 
           <div class="mb-3" id="zoneFrais" style="display:none;">
             <div class="alert alert-info mb-0">
-              <strong>Frais :</strong> <span id="affichageFrais">0</span> Ar<br>
-              <strong>Total débité :</strong> <span id="affichageTotal">0</span> Ar
+              <div><strong>Frais :</strong> <span id="affichageFrais">0</span> Ar</div>
+              <div><strong>Total débité :</strong> <span id="affichageTotal">0</span> Ar</div>
+              <div id="zoneRecu" style="display:none;"><strong>Montant reçu par destinataire :</strong> <span id="affichageRecu">0</span> Ar</div>
             </div>
           </div>
 
@@ -78,53 +79,19 @@
 const typesData = <?= json_encode($typesJson) ?>;
 let tranchesCache = {};
 
-document.getElementById('type_operation').addEventListener('change', function() {
-    const type = this.value;
-    const zoneDest = document.getElementById('zoneDestinataires');
-    const zoneMontant = document.getElementById('zoneMontantGlobal');
-    const btnAjouter = document.getElementById('btnAjouterDest');
-    const zoneFrais = document.getElementById('zoneFrais');
-    const zoneBareme = document.getElementById('zoneBareme');
-    const zoneInclureFrais = document.getElementById('zoneInclureFrais');
+function formatMontant(val) {
+    return parseFloat(val).toLocaleString('fr-FR');
+}
 
-    // Montant visible seulement si type est choisi
-    zoneMontant.style.display = (type !== '') ? 'block' : 'none';
-    
-    // Destinataires visibles seulement si transfert
-    zoneDest.style.display = (type === 'transfert') ? 'block' : 'none';
-    btnAjouter.style.display = (type === 'transfert') ? 'block' : 'none';
-    
-    zoneFrais.style.display = (type !== 'depot' && type !== '') ? 'block' : 'none';
-    zoneBareme.style.display = (type !== 'depot' && type !== '') ? 'block' : 'none';
-    zoneInclureFrais.style.display = (type === 'transfert') ? 'block' : 'none';
-
-    // Activer/désactiver le bouton selon le type
-    document.getElementById('btnValider').disabled = (type === '');
-    
-    if (type === 'depot' || type === '') {
-        document.getElementById('affichageFrais').textContent = '0';
-        document.getElementById('affichageTotal').textContent = document.getElementById('montant').value || '0';
-        document.getElementById('tableBareme').querySelector('tbody').innerHTML = '';
-    }
-
-    if (type && type !== 'depot') {
-        chargerTranches(type);
-    }
-});
-
-document.getElementById('btnAjouterDest').addEventListener('click', function() {
-    const container = document.getElementById('zoneDestinataires');
-    const newId = 'destinataire' + (container.children.length + 1);
-    const div = document.createElement('div');
-    div.className = 'destinataire-group';
-    div.id = newId;
-    div.innerHTML = `
-        <div class="mb-3"><label class="form-label">Numéro destinataire</label><input type="text" class="form-control numero-dest" name="numero_dest[]" maxlength="10" placeholder="Ex: 0331234567"></div>
-    `;
-    container.appendChild(div);
-});
-
-// Helper functions (chargerTranches, afficherTranches, calculerFrais, formatMontant, etc.)
+function afficherTranches(tranches) {
+    const tbody = document.getElementById('tableBareme').querySelector('tbody');
+    tbody.innerHTML = '';
+    tranches.forEach(t => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = '<td>' + formatMontant(t.montant_min) + '</td><td>' + formatMontant(t.montant_max) + '</td><td>' + formatMontant(t.montant_frais) + '</td>';
+        tbody.appendChild(tr);
+    });
+}
 
 function chargerTranches(typeNom) {
     const nomReel = (typeNom === 'transfert_multiple' ? 'transfert' : typeNom);
@@ -145,85 +112,140 @@ function chargerTranches(typeNom) {
             calculerFrais();
         })
         .catch(() => {
-            alert('Impossible de charger le barème des frais. Réessayez.');
+            console.error('Erreur chargement barème');
         });
 }
 
-function afficherTranches(tranches) {
-    const tbody = document.getElementById('tableBareme').querySelector('tbody');
-    tbody.innerHTML = '';
-    tranches.forEach(t => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = '<td>' + formatMontant(t.montant_min) + '</td><td>' + formatMontant(t.montant_max) + '</td><td>' + formatMontant(t.montant_frais) + '</td>';
-        tbody.appendChild(tr);
-    });
-}
-
-document.getElementById('montant').addEventListener('input', calculerFrais);
-
 function calculerFrais() {
-    const type = document.getElementById('type_operation').value;
-    if (type === 'depot' || !type) {
-        document.getElementById('affichageFrais').textContent = '0';
-        document.getElementById('affichageTotal').textContent = document.getElementById('montant').value || '0';
+    const typeSel = document.getElementById('type_operation').value;
+    const montantGlobal = parseFloat(document.getElementById('montant').value) || 0;
+
+    const affFrais = document.getElementById('affichageFrais');
+    const affTotal = document.getElementById('affichageTotal');
+    const affRecu  = document.getElementById('affichageRecu');
+    const zoneRecu = document.getElementById('zoneRecu');
+
+    // Dépôt ou montant non saisi : pas de frais
+    if (typeSel === 'depot' || typeSel === '' || montantGlobal <= 0) {
+        affFrais.textContent = '0';
+        affTotal.textContent = formatMontant(montantGlobal);
+        zoneRecu.style.display = 'none';
         return;
     }
 
-    const montantGlobal = parseFloat(document.getElementById('montant').value) || 0;
-    const typeObj = typesData.find(t => t.nom === (type === 'transfert_multiple' ? 'transfert' : type));
+    const nomReel = (typeSel === 'transfert_multiple' ? 'transfert' : typeSel);
+    const typeObj = typesData.find(t => t.nom === nomReel);
     if (!typeObj || !tranchesCache[typeObj.id]) return;
 
-    let montantParTransfert = montantGlobal;
     let nbDestinataires = 1;
-
-    if (type === 'transfert_multiple') {
+    if (typeSel === 'transfert' || typeSel === 'transfert_multiple') {
         const numeros = document.querySelectorAll('.numero-dest');
         let count = 0;
-        numeros.forEach(input => { if(input.value.trim() !== '') count++; });
+        numeros.forEach(input => { if (input.value.trim() !== '') count++; });
         nbDestinataires = count > 0 ? count : 1;
-        montantParTransfert = montantGlobal / nbDestinataires;
     }
 
+    const montantParTransfert = montantGlobal / nbDestinataires;
     const tranche = tranchesCache[typeObj.id].find(t => montantParTransfert >= t.montant_min && montantParTransfert <= t.montant_max);
     const fraisParTransfert = tranche ? parseFloat(tranche.montant_frais) : 0;
     const fraisTotal = fraisParTransfert * nbDestinataires;
 
-    document.getElementById('affichageFrais').textContent = formatMontant(fraisTotal);
-    document.getElementById('affichageTotal').textContent = formatMontant(montantGlobal + fraisTotal);
+    const inclureFrais = document.getElementById('inclure_frais').checked;
+
+    let totalDebite = montantGlobal;
+    if (inclureFrais) {
+        totalDebite = montantGlobal + fraisTotal;
+        zoneRecu.style.display = 'none';
+    } else {
+        const montantRecuParDest = montantParTransfert - fraisParTransfert;
+        affRecu.textContent = formatMontant(montantRecuParDest > 0 ? montantRecuParDest : 0);
+        zoneRecu.style.display = 'block';
+    }
+
+    affFrais.textContent = formatMontant(fraisTotal);
+    affTotal.textContent = formatMontant(totalDebite);
 }
 
-function formatMontant(val) {
-    return parseFloat(val).toLocaleString('fr-FR');
-}
+document.getElementById('type_operation').addEventListener('change', function() {
+    const type = this.value;
+    const zoneDest = document.getElementById('zoneDestinataires');
+    const zoneMontant = document.getElementById('zoneMontantGlobal');
+    const btnAjouter = document.getElementById('btnAjouterDest');
+    const zoneFrais = document.getElementById('zoneFrais');
+    const zoneBareme = document.getElementById('zoneBareme');
+    const zoneInclureFrais = document.getElementById('zoneInclureFrais');
+
+    zoneMontant.style.display = (type !== '') ? 'block' : 'none';
+    zoneDest.style.display = (type === 'transfert' || type === 'transfert_multiple') ? 'block' : 'none';
+    btnAjouter.style.display = (type === 'transfert' || type === 'transfert_multiple') ? 'block' : 'none';
+    zoneFrais.style.display = (type !== 'depot' && type !== '') ? 'block' : 'none';
+    zoneBareme.style.display = (type !== 'depot' && type !== '') ? 'block' : 'none';
+    zoneInclureFrais.style.display = (type === 'transfert' || type === 'transfert_multiple') ? 'block' : 'none';
+
+    document.getElementById('btnValider').disabled = (type === '');
+    
+    if (type && type !== 'depot') {
+        chargerTranches(type);
+    } else {
+        calculerFrais();
+    }
+    // Ajout explicite pour forcer le calcul si type changé
+    calculerFrais();
+});
+
+document.getElementById('btnAjouterDest').addEventListener('click', function() {
+    const container = document.getElementById('zoneDestinataires');
+    const div = document.createElement('div');
+    div.className = 'destinataire-group';
+    div.innerHTML = `
+        <div class="mb-3"><label class="form-label">Numéro destinataire</label><input type="text" class="form-control numero-dest" name="numero_dest[]" maxlength="10" placeholder="Ex: 0331234567"></div>
+    `;
+    div.querySelector('.numero-dest').addEventListener('input', calculerFrais);
+    container.appendChild(div);
+});
+
+document.getElementById('montant').addEventListener('input', calculerFrais);
+document.getElementById('inclure_frais').addEventListener('change', calculerFrais);
 
 document.getElementById('formOperation').addEventListener('submit', async function(e) {
+    e.preventDefault();
     const type = document.getElementById('type_operation').value;
-    if (type === 'transfert_multiple') {
+    if (type === 'transfert' || type === 'transfert_multiple') {
         const numeros = document.querySelectorAll('.numero-dest');
         let operateurId = null;
-        
+        let hasDest = false;
+
         for (let numInput of numeros) {
             const num = numInput.value.trim();
             if (!num) continue;
-            
-            const resp = await fetch('/client/operateur-du-numero-json?numero=' + encodeURIComponent(num));
-            const data = await resp.json();
-            
-            if (!data.operateur) {
-                alert('Numéro destinataire invalide : ' + num);
-                e.preventDefault();
-                return;
-            }
-            
-            if (operateurId === null) {
-                operateurId = data.operateur.id;
-            } else if (operateurId !== data.operateur.id) {
-                alert('Tous les destinataires doivent être du même opérateur.');
-                e.preventDefault();
+            hasDest = true;
+
+            try {
+                const resp = await fetch('/client/operateur-du-numero-json?numero=' + encodeURIComponent(num));
+                const data = await resp.json();
+
+                if (!data.operateur) {
+                    alert('Numéro destinataire invalide : ' + num);
+                    return;
+                }
+
+                if (operateurId === null) {
+                    operateurId = data.operateur.id;
+                } else if (operateurId !== data.operateur.id) {
+                    alert('Tous les destinataires doivent être du même opérateur.');
+                    return;
+                }
+            } catch (err) {
+                alert('Erreur lors de la vérification du numéro.');
                 return;
             }
         }
+        if (!hasDest) {
+            alert('Veuillez saisir au moins un destinataire.');
+            return;
+        }
     }
+    this.submit();
 });
 </script>
 
