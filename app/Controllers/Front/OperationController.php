@@ -38,6 +38,13 @@ class OperationController extends BaseController
         return $this->response->setJSON(['existe' => $existe]);
     }
 
+    public function operateurDuNumeroJson()
+    {
+        $numero = $this->request->getGet('numero');
+        $operateur = (new NumeroTelephoneModel())->operateurDuNumero($numero);
+        return $this->response->setJSON(['operateur' => $operateur]);
+    }
+
     public function enregistrer()
     {
         $typeNom       = $this->request->getPost('type_operation');
@@ -102,42 +109,84 @@ class OperationController extends BaseController
         }
 
         // Transfert : frais selon tranche, destinataire obligatoire
-        if ($typeNom === 'transfert') {
-            if (empty($numeroDest)) {
-                return redirect()->back()->withInput()->with('error', 'Veuillez saisir le numéro du destinataire.');
-            }
-            if ($numeroDest === session()->get('numero')) {
-                return redirect()->back()->withInput()->with('error', 'Vous ne pouvez pas vous envoyer de l\'argent.');
-            }
-            $destinataire = $numeroModel->trouverParNumero($numeroDest);
-            if (!$destinataire) {
-                return redirect()->back()->withInput()->with('error', "Le numéro {$numeroDest} n'existe pas.");
-            }
-
-            $frais  = $tranchesModel->calculerFrais($montant, $type['id']);
-            $total  = $montant + $frais;
-            if ($montantSolde < $total) {
-                return redirect()->back()->withInput()->with('error', "Solde insuffisant. Solde : " . number_format($montantSolde, 0, ',', ' ') . " F, total requis : " . number_format($total, 0, ',', ' ') . " F.");
-            }
-
+        if ($typeNom === 'transfert' || $typeNom === 'transfert_multiple') {
+            $inclureFrais = $this->request->getPost('inclure_frais') === 'on';
             $db = \Config\Database::connect();
             $db->transStart();
-            $operationModel->insert([
-                'id_type_operation'  => $type['id'],
-                'id_numero_tel'      => $idNumero,
-                'id_numero_tel_dest' => $destinataire['id'],
-                'montant'            => $montant,
-                'frais'              => $frais,
-                'date'               => date('Y-m-d H:i:s'),
-            ]);
-            $soldeModel->insererNouveauSolde($idNumero, -$total);
-            $soldeModel->insererNouveauSolde($destinataire['id'], $montant);
+
+            if ($typeNom === 'transfert') {
+                if (empty($numeroDest)) {
+                    $db->transRollback();
+                    return redirect()->back()->withInput()->with('error', 'Veuillez saisir le numéro du destinataire.');
+                }
+                $destinataire = $numeroModel->trouverParNumero($numeroDest);
+                if (!$destinataire) {
+                    $db->transRollback();
+                    return redirect()->back()->withInput()->with('error', "Le numéro {$numeroDest} n'existe pas.");
+                }
+                $numeros = [$numeroDest];
+                $montants = [$montant];
+            } else {
+                $numeros = $this->request->getPost('numero_dest');
+                $montantGlobal = (float)$this->request->getPost('montant');
+                $nbDest = count(array_filter($numeros));
+                if ($nbDest === 0) {
+                    $db->transRollback();
+                    return redirect()->back()->withInput()->with('error', 'Au moins un destinataire est requis.');
+                }
+                $montParDest = $montantGlobal / $nbDest;
+                $montants = array_fill(0, count($numeros), $montParDest);
+            }
+
+            $montantTotal = 0;
+            $operateurCommuns = null;
+
+            for ($i = 0; $i < count($numeros); $i++) {
+                if (empty(trim($numeros[$i]))) continue;
+                $num = trim($numeros[$i]);
+                $mont = (float)$montants[$i];
+                $dest = $numeroModel->trouverParNumero($num);
+                $opDest = $numeroModel->operateurDuNumero($num);
+
+                if ($operateurCommuns === null) $operateurCommuns = $opDest['id'];
+                else if ($operateurCommuns !== $opDest['id']) {
+                    $db->transRollback();
+                    return redirect()->back()->withInput()->with('error', "Tous les destinataires doivent être du même opérateur.");
+                }
+
+                $frais = $tranchesModel->calculerFrais($mont, $type['id']);
+                // "il n'y a pas de frais de retrait pour les autres opérateurs" -> Si externe, frais = 0
+                if (!$opDest['est_notre_operateur']) $frais = 0;
+
+                $commission = (!$opDest['est_notre_operateur']) ? ($mont * $opDest['commission_exterieur']) : 0;
+                
+                $cout = $mont + ($inclureFrais ? $frais : 0);
+                $montantTotal += $cout;
+
+                $operationModel->insert([
+                    'id_type_operation'  => $type['id'],
+                    'id_numero_tel'      => $idNumero,
+                    'id_numero_tel_dest' => $dest['id'],
+                    'montant'            => $mont,
+                    'frais'              => $frais,
+                    'commission'         => $commission,
+                    'date'               => date('Y-m-d H:i:s'),
+                ]);
+                $soldeModel->insererNouveauSolde($dest['id'], $mont + $commission);
+            }
+
+            if ($montantSolde < $montantTotal) {
+                $db->transRollback();
+                return redirect()->back()->withInput()->with('error', "Solde insuffisant.");
+            }
+
+            $soldeModel->insererNouveauSolde($idNumero, -$montantTotal);
             $db->transComplete();
 
             if ($db->transStatus() === false) {
                 return redirect()->back()->withInput()->with('error', 'Erreur lors du transfert.');
             }
-            return redirect()->to('/client/solde')->with('success', "Transfert de " . number_format($montant, 0, ',', ' ') . " F vers {$numeroDest} effectué (frais : " . number_format($frais, 0, ',', ' ') . " F).");
+            return redirect()->to('/client/solde')->with('success', "Transfert effectué.");
         }
 
         return redirect()->back()->withInput()->with('error', 'Type d\'opération inconnu.');

@@ -13,8 +13,8 @@ class RapportController extends BaseController
         $fin = $this->request->getGet('fin');
         $model = new OperationModel();
 
-        $data['gains'] = $model->gainsParPeriode($debut, $fin);
-        $data['totalGains'] = array_sum(array_column($data['gains'], 'total_frais'));
+        $data['gains'] = $model->gainsParPeriodeParOperateur($debut, $fin);
+        $data['totalGains'] = array_sum(array_column($data['gains'], 'total_frais')) + array_sum(array_column($data['gains'], 'total_commission'));
         $data['debut'] = $debut;
         $data['fin'] = $fin;
         $data['title'] = 'Rapport des gains';
@@ -38,5 +38,13 @@ class RapportController extends BaseController
             'annee'   => $annee,
             'donnees'  => $resultats,
         ]);
+    }
+
+    public function montantsAEnvoyer()
+    {
+        $model = new OperationModel();
+        $data['montants'] = $model->montantsAEnvoyerParOperateur();
+        $data['title'] = 'Montants à envoyer aux opérateurs externes';
+        return view('Admin/rapport/montants_a_envoyer', $data);
     }
 }

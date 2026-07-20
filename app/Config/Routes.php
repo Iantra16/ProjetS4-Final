@@ -16,6 +16,14 @@ $routes->get('unauthorized', static fn() => view('errors/unauthorized'));
 
 $routes->group('admin', function ($routes) {
 
+    // CRUD Opérateurs
+    $routes->get('operateurs', 'Admin\OperateurController::index');
+    $routes->get('operateurs/nouveau', 'Admin\OperateurController::nouveau');
+    $routes->post('operateurs/creer', 'Admin\OperateurController::creer');
+    $routes->get('operateurs/modifier/(:num)', 'Admin\OperateurController::modifier/$1');
+    $routes->post('operateurs/mettreAJour/(:num)', 'Admin\OperateurController::mettreAJour/$1');
+    $routes->get('operateurs/supprimer/(:num)', 'Admin\OperateurController::supprimer/$1');
+
     // CRUD Tranches Frais
     $routes->get('tranches', 'Admin\TrancheFraisController::index');
     $routes->get('tranches/nouveau', 'Admin\TrancheFraisController::nouveau');
@@ -50,6 +58,7 @@ $routes->group('admin', function ($routes) {
 
     // Rapport gains
     $routes->get('rapport/gains', 'Admin\RapportController::gains');
+    $routes->get('rapport/montants-a-envoyer', 'Admin\RapportController::montantsAEnvoyer');
 });
 
 $routes->group('client', ['filter' => 'client'], function($routes) {
@@ -59,4 +68,5 @@ $routes->group('client', ['filter' => 'client'], function($routes) {
     $routes->get('historique', 'Front\OperationController::historique');
     $routes->get('tranches-json', 'Front\OperationController::tranchesJson');
     $routes->get('numero-existe-json', 'Front\OperationController::numeroExisteJson');
+    $routes->get('operateur-du-numero-json', 'Front\OperationController::operateurDuNumeroJson');
 });

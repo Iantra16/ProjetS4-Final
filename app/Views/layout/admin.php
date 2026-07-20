@@ -15,11 +15,13 @@
   <nav class="bg-dark text-white vh-100 p-3" style="width:230px; position:fixed;">
     <h5 class="mb-4">Admin</h5>
     <ul class="nav flex-column">
-      <li class="nav-item"><a class="nav-link text-white" href="/admin/prefixes"><i class="bi bi-telephone"></i> Préfixes</a></li>
-      <li class="nav-item"><a class="nav-link text-white" href="/admin/types-operation"><i class="bi bi-arrow-left-right"></i> Types opération</a></li>
-      <li class="nav-item"><a class="nav-link text-white" href="/admin/tranches"><i class="bi bi-cash-stack"></i> Tranches frais</a></li>
-      <li class="nav-item"><a class="nav-link text-white" href="/admin/comptes"><i class="bi bi-people"></i> Comptes clients</a></li>
-      <li class="nav-item"><a class="nav-link text-white" href="/admin/rapport/gains"><i class="bi bi-graph-up"></i> Gains</a></li>
+      <li class="nav-item"><a class="nav-link text-white" href="/admin/operateurs">Opérateurs</a></li>
+      <li class="nav-item"><a class="nav-link text-white" href="/admin/prefixes">Préfixes</a></li>
+      <li class="nav-item"><a class="nav-link text-white" href="/admin/types-operation"></i> Types opération</a></li>
+      <li class="nav-item"><a class="nav-link text-white" href="/admin/tranches">Tranches frais</a></li>
+      <li class="nav-item"><a class="nav-link text-white" href="/admin/comptes"> Comptes clients</a></li>
+      <li class="nav-item"><a class="nav-link text-white" href="/admin/rapport/gains">Gains</a></li>
+      <li class="nav-item"><a class="nav-link text-white" href="/admin/rapport/montants-a-envoyer">Montants à envoyer</a></li>
     </ul>
     <form method="POST" action="/logout" class="mt-4">
       <?= csrf_field() ?>

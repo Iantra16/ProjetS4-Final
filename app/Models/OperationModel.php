@@ -7,15 +7,42 @@ use CodeIgniter\Model;
 class OperationModel extends Model
 {
     protected $table = 'operation';
-    protected $allowedFields = ['id_type_operation', 'id_numero_tel', 'id_numero_tel_dest', 'montant', 'frais', 'date'];
+    protected $allowedFields = ['id_type_operation', 'id_numero_tel', 'id_numero_tel_dest', 'montant', 'frais', 'date', 'commission'];
 
-    public function gainsParType(): array
+    public function gainsParOperateur(): array
     {
-        return $this->db->table('operation')
-            ->select('type_operation.nom, SUM(operation.frais) as total_frais, COUNT(*) as nb_operations')
-            ->join('type_operation', 'type_operation.id = operation.id_type_operation')
-            ->groupBy('type_operation.nom')
+        return $this->db->table('operation o')
+            ->select('op.nom, op.est_notre_operateur, SUM(o.frais) as total_frais, SUM(o.commission) as total_commission')
+            ->join('numero_telephone nt', 'nt.id = o.id_numero_tel')
+            ->join('prefixe_operateur po', 'po.id = nt.id_prefixe')
+            ->join('operateur op', 'op.id = po.id_operateur')
+            ->groupBy('op.nom, op.est_notre_operateur')
             ->get()->getResultArray();
+    }
+
+    public function montantsAEnvoyerParOperateur(): array
+    {
+        return $this->db->table('operation o')
+            ->select('op.nom, SUM(o.montant + o.commission) as total_a_envoyer')
+            ->join('numero_telephone nt_dest', 'nt_dest.id = o.id_numero_tel_dest')
+            ->join('prefixe_operateur po', 'po.id = nt_dest.id_prefixe')
+            ->join('operateur op', 'op.id = po.id_operateur')
+            ->where('op.est_notre_operateur', 0)
+            ->groupBy('op.nom')
+            ->get()->getResultArray();
+    }
+
+
+    public function gainsParPeriodeParOperateur(?string $debut = null, ?string $fin = null): array
+    {
+        $builder = $this->db->table('operation o')
+            ->select('op.nom, op.est_notre_operateur, SUM(o.frais) as total_frais, SUM(o.commission) as total_commission')
+            ->join('numero_telephone nt', 'nt.id = o.id_numero_tel')
+            ->join('prefixe_operateur po', 'po.id = nt.id_prefixe')
+            ->join('operateur op', 'op.id = po.id_operateur');
+        if ($debut) $builder->where('o.date >=', $debut);
+        if ($fin)   $builder->where('o.date <=', $fin . ' 23:59:59');
+        return $builder->groupBy('op.nom, op.est_notre_operateur')->get()->getResultArray();
     }
 
     public function gainsParPeriode(?string $debut = null, ?string $fin = null): array

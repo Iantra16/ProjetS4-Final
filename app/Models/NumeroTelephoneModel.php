@@ -32,4 +32,15 @@ class NumeroTelephoneModel extends Model
             ->join('solde s', 's.id = (SELECT id FROM solde WHERE id_numero_tel = nt.id ORDER BY id DESC LIMIT 1)', 'left')
             ->get()->getResultArray();
     }
+
+    public function operateurDuNumero(string $numero): ?array
+    {
+        $numeroData = $this->trouverParNumero($numero);
+        if (!$numeroData) return null;
+
+        $prefixe = (new PrefixeOperateurModel())->find($numeroData['id_prefixe']);
+        if (!$prefixe) return null;
+
+        return (new OperateurModel())->find($prefixe['id_operateur']);
+    }
 }
