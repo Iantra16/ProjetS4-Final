@@ -36,13 +36,14 @@ class OperationModel extends Model
     public function gainsParPeriodeParOperateur(?string $debut = null, ?string $fin = null): array
     {
         $builder = $this->db->table('operation o')
-            ->select('op.nom, op.est_notre_operateur, SUM(o.frais) as total_frais, SUM(o.commission) as total_commission')
-            ->join('numero_telephone nt', 'nt.id = o.id_numero_tel')
-            ->join('prefixe_operateur po', 'po.id = nt.id_prefixe')
-            ->join('operateur op', 'op.id = po.id_operateur');
+            ->select('op.nom, op.est_notre_operateur, t.nom as type_nom, SUM(o.frais) as total_frais, SUM(o.commission) as total_commission')
+            ->join('numero_telephone nt', 'nt.id = o.id_numero_tel', 'left')
+            ->join('prefixe_operateur po', 'po.id = nt.id_prefixe', 'left')
+            ->join('operateur op', 'op.id = po.id_operateur', 'left')
+            ->join('type_operation t', 't.id = o.id_type_operation', 'left');
         if ($debut) $builder->where('o.date >=', $debut);
         if ($fin)   $builder->where('o.date <=', $fin . ' 23:59:59');
-        return $builder->groupBy('op.nom, op.est_notre_operateur')->get()->getResultArray();
+        return $builder->groupBy('op.nom, op.est_notre_operateur, t.nom')->get()->getResultArray();
     }
 
     public function gainsParPeriode(?string $debut = null, ?string $fin = null): array

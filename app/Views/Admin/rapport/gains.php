@@ -26,22 +26,24 @@
         <tr>
             <th>Opérateur</th>
             <th>Type</th>
+            <th>Opération</th>
             <th>Total frais</th>
             <th>Total commission</th>
         </tr>
     </thead>
     <tbody>
         <?php if (empty($gains)): ?>
-            <tr><td colspan="4" class="text-center">Aucune donnée.</td></tr>
+            <tr><td colspan="5" class="text-center">Aucune donnée.</td></tr>
         <?php else: ?>
             <?php foreach ($gains as $g): ?>
                 <tr>
-                    <td><?= esc(ucfirst($g['nom'])) ?></td>
+                    <td><?= esc(ucfirst($g['nom'] ?? 'Inconnu')) ?></td>
                     <td>
                         <span class="badge bg-<?= $g['est_notre_operateur'] ? 'success' : 'warning' ?>">
                             <?= $g['est_notre_operateur'] ? 'Interne' : 'Externe' ?>
                         </span>
                     </td>
+                    <td><?= esc(ucfirst($g['type_nom'] ?? 'Inconnu')) ?></td>
                     <td><?= number_format($g['total_frais'], 0, ',', ' ') ?> Ar</td>
                     <td><?= number_format($g['total_commission'], 0, ',', ' ') ?> Ar</td>
                 </tr>
@@ -51,7 +53,7 @@
     <?php if (!empty($gains)): ?>
     <tfoot>
         <tr class="table-dark">
-            <th colspan="2">Total général</th>
+            <th colspan="3">Total général</th>
             <th><?= number_format(array_sum(array_column($gains, 'total_frais')), 0, ',', ' ') ?> Ar</th>
             <th><?= number_format(array_sum(array_column($gains, 'total_commission')), 0, ',', ' ') ?> Ar</th>
         </tr>
