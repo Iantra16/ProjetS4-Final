@@ -77,6 +77,7 @@
 
 <script>
 const typesData = <?= json_encode($typesJson) ?>;
+const senderOpId = <?= json_encode($senderOperateurId) ?>;
 let tranchesCache = {};
 
 function formatMontant(val) {
@@ -214,11 +215,13 @@ document.getElementById('formOperation').addEventListener('submit', async functi
         const numeros = document.querySelectorAll('.numero-dest');
         let operateurId = null;
         let hasDest = false;
+        let nbDest = 0;
 
         for (let numInput of numeros) {
             const num = numInput.value.trim();
             if (!num) continue;
             hasDest = true;
+            nbDest++;
 
             try {
                 const resp = await fetch('/client/operateur-du-numero-json?numero=' + encodeURIComponent(num));
@@ -242,6 +245,11 @@ document.getElementById('formOperation').addEventListener('submit', async functi
         }
         if (!hasDest) {
             alert('Veuillez saisir au moins un destinataire.');
+            return;
+        }
+        // Envoi multiple : l'expéditeur et les destinataires doivent être du même opérateur
+        if (nbDest > 1 && senderOpId !== null && operateurId !== senderOpId) {
+            alert('L\'expéditeur et les destinataires doivent être du même opérateur.');
             return;
         }
     }

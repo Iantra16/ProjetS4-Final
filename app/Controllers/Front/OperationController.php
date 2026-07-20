@@ -21,6 +21,10 @@ class OperationController extends BaseController
         $data['title']        = 'Effectuer une opération';
         $data['typesJson']    = $data['types'];
 
+        $senderNum = (new NumeroTelephoneModel())->find(session()->get('numero_id'));
+        $senderOp  = $senderNum ? (new NumeroTelephoneModel())->operateurDuNumero($senderNum['numero']) : null;
+        $data['senderOperateurId'] = $senderOp ? $senderOp['id'] : null;
+
         return view('Front/operation', $data);
     }
 
@@ -121,11 +125,16 @@ class OperationController extends BaseController
                 $db->transRollback();
                 return redirect()->back()->withInput()->with('error', 'Au moins un destinataire est requis.');
             }
-            
+
+            $senderNum = $numeroModel->find($idNumero);
+            $senderOp  = $senderNum ? $numeroModel->operateurDuNumero($senderNum['numero']) : null;
+            $senderOpId = $senderOp ? $senderOp['id'] : null;
+
             $montParDest = $montantGlobal / $nbDest;
-            
+
             $montantTotal = 0;
-            $operateurCommuns = null;
+            // Envoi multiple : l'expéditeur et tous les destinataires doivent être du même opérateur
+            $operateurCommuns = ($nbDest >= 2) ? $senderOpId : null;
 
             for ($i = 0; $i < $nbDest; $i++) {
                 $num = trim($numeros[$i]);
@@ -141,7 +150,7 @@ class OperationController extends BaseController
                 if ($operateurCommuns === null) $operateurCommuns = $opDest['id'];
                 else if ($operateurCommuns !== $opDest['id']) {
                     $db->transRollback();
-                    return redirect()->back()->withInput()->with('error', "Tous les destinataires doivent être du même opérateur.");
+                    return redirect()->back()->withInput()->with('error', "L'expéditeur et les destinataires doivent être du même opérateur.");
                 }
 
                 $frais = $tranchesModel->calculerFrais($mont, $type['id']);
