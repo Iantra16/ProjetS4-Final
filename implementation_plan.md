@@ -2,15 +2,15 @@
 
 ## Architecture en place (rappel)
 
-| Élément | Pattern observé |
-|---|---|
-| Layout admin | `layout/admin.php` → `$this->extend('layout/admin')` + `$this->section('content')` |
-| Layout front | `layout/front.php` → idem |
-| Controllers admin | `App\Controllers\Admin\NomController` dans `app/Controllers/Admin/` |
-| Controllers front | `App\Controllers\Front\NomController` dans `app/Controllers/Front/` |
-| Filtre auth admin | ~~aucun pour l'instant~~ — groupe `admin` accessible directement par URL |
-| Bootstrap | offline dans `/assets/vendor/bootstrap/` |
-| Flash messages | `session()->getFlashdata('success')` / `'error'` déjà gérés dans les layouts |
+| Élément         | Pattern observé                                                                          |
+| ----------------- | ----------------------------------------------------------------------------------------- |
+| Layout admin      | `layout/admin.php` → `$this->extend('layout/admin')` + `$this->section('content')` |
+| Layout front      | `layout/front.php` → idem                                                              |
+| Controllers admin | `App\Controllers\Admin\NomController` dans `app/Controllers/Admin/`                   |
+| Controllers front | `App\Controllers\Front\NomController` dans `app/Controllers/Front/`                   |
+| Filtre auth admin | ~~aucun pour l'instant~~ — groupe `admin` accessible directement par URL              |
+| Bootstrap         | offline dans`/assets/vendor/bootstrap/`                                                 |
+| Flash messages    | `session()->getFlashdata('success')` / `'error'` déjà gérés dans les layouts      |
 
 ---
 
@@ -18,18 +18,21 @@
 
 > [!NOTE]
 > Pas d'authentification pour l'instant. Le groupe `admin` dans `Routes.php` est déclaré **sans filtre** :
+>
 > ```php
 > // AVANT (avec auth) → NE PAS UTILISER
 > $routes->group('admin', ['filter' => 'auth:admin'], function ($routes) {
-> 
+>
 > // APRÈS (accès direct par URL)
 > $routes->group('admin', function ($routes) {
 > ```
+>
 > Quand l'auth sera nécessaire plus tard, il suffira de rajouter `['filter' => 'auth:admin']`.
 
 ### 1. CRUD Préfixe Opérateur
 
 #### `app/Config/Routes.php` — ajouter dans le groupe `admin`
+
 ```php
 $routes->get('prefixes', 'Admin\PrefixeController::index');
 $routes->get('prefixes/new', 'Admin\PrefixeController::new');
@@ -40,6 +43,7 @@ $routes->get('prefixes/delete/(:num)', 'Admin\PrefixeController::delete/$1');
 ```
 
 #### `app/Models/PrefixeOperateurModel.php` — méthodes à ajouter
+
 ```php
 protected $validationRules = [
     'prefixe' => 'required|exact_length[3]|is_natural_no_zero|is_unique[prefixe_operateur.prefixe,id,{id}]',
@@ -56,10 +60,13 @@ public function estUtilise(int $id): bool
 ```
 
 #### `app/Controllers/Admin/PrefixeController.php` — [NOUVEAU]
+
 Méthodes : `index`, `new`, `create`, `edit`, `update`, `delete`
+
 - `delete` : appelle `$model->estUtilise($id)` avant de supprimer → si vrai, `redirect()->back()->with('error', 'Ce préfixe est utilisé par des numéros existants.')`
 
 #### Vues à créer
+
 - `app/Views/Admin/prefixes/index.php` — tableau (prefixe, nom) + boutons Edit/Delete + bouton "+ Ajouter"
 - `app/Views/Admin/prefixes/form.php` — formulaire réutilisé create/edit (2 champs : prefixe, nom)
 
@@ -68,6 +75,7 @@ Méthodes : `index`, `new`, `create`, `edit`, `update`, `delete`
 ### 2. CRUD Type Opération
 
 #### `Routes.php` — ajouter dans `admin`
+
 ```php
 $routes->get('types-operation', 'Admin\TypeOperationController::index');
 $routes->get('types-operation/new', 'Admin\TypeOperationController::new');
@@ -78,6 +86,7 @@ $routes->get('types-operation/delete/(:num)', 'Admin\TypeOperationController::de
 ```
 
 #### `app/Models/TypeOperationModel.php` — ajouter
+
 ```php
 protected $validationRules = [
     'nom' => 'required|min_length[2]|is_unique[type_operation.nom,id,{id}]',
@@ -85,9 +94,11 @@ protected $validationRules = [
 ```
 
 #### `app/Controllers/Admin/TypeOperationController.php` — [NOUVEAU]
+
 Méthodes : `index`, `new`, `create`, `edit`, `update`, `delete`
 
 #### Vues à créer
+
 - `app/Views/Admin/types_operation/index.php`
 - `app/Views/Admin/types_operation/form.php`
 
@@ -99,6 +110,7 @@ Méthodes : `index`, `new`, `create`, `edit`, `update`, `delete`
 > La table `tranches_frais` possède désormais une colonne `id_type_operation` (FK vers `type_operation`). Chaque type d'opération a son propre barème. Le dépôt n'a pas de tranches (frais = 0 en dur).
 
 #### `Routes.php` — ajouter dans `admin`
+
 ```php
 $routes->get('tranches', 'Admin\TrancheFraisController::index');
 $routes->get('tranches/new', 'Admin\TrancheFraisController::new');
@@ -109,6 +121,7 @@ $routes->get('tranches/delete/(:num)', 'Admin\TrancheFraisController::delete/$1'
 ```
 
 #### `app/Models/TranchesFraisModel.php` — méthodes à ajouter
+
 ```php
 // allowedFields déjà mis à jour :
 // protected $allowedFields = ['id_type_operation', 'montant_min', 'montant_max', 'montant_frais', 'date'];
@@ -170,11 +183,13 @@ public function calculerFrais(float $montant, int $idTypeOperation): float
 ```
 
 #### `app/Controllers/Admin/TrancheFraisController.php` — [NOUVEAU]
+
 - `index` : passer aussi `$types = (new TypeOperationModel())->findAll()` pour afficher le nom du type dans le tableau
 - `new` / `edit` : passer `$types` à la vue pour afficher un `<select>` de types d'opération
 - `create` / `update` : appeler `$model->chevauchementExiste($idType, $min, $max, $excludeId)` → erreur si chevauchement
 
 #### Vues à créer
+
 - `app/Views/Admin/tranches/index.php` — tableau groupé par type (colonne Type + montant_min/max/frais)
 - `app/Views/Admin/tranches/form.php` — `<select>` type d'opération + 3 champs numériques
 
@@ -183,11 +198,13 @@ public function calculerFrais(float $montant, int $idTypeOperation): float
 ### 4. Rapport Gains (Situation des gains via frais)
 
 #### `Routes.php` — ajouter dans `admin`
+
 ```php
 $routes->get('rapport/gains', 'Admin\RapportController::gains');
 ```
 
 #### `app/Models/OperationModel.php` — méthodes à ajouter
+
 ```php
 // Gains groupés par type d'opération
 public function gainsParType(): array
@@ -212,6 +229,7 @@ public function gainsParPeriode(?string $debut = null, ?string $fin = null): arr
 ```
 
 #### `app/Controllers/Admin/RapportController.php` — [NOUVEAU]
+
 ```php
 public function gains()
 {
@@ -229,6 +247,7 @@ public function gains()
 ```
 
 #### Vues à créer
+
 - `app/Views/Admin/rapport/gains.php` — filtre date début/fin + tableau par type + total général
 
 ---
@@ -236,12 +255,14 @@ public function gains()
 ### 5. Situation Comptes Clients (vue opérateur)
 
 #### `Routes.php` — ajouter dans `admin`
+
 ```php
 $routes->get('comptes', 'Admin\CompteController::index');
 $routes->get('comptes/(:num)', 'Admin\CompteController::show/$1');
 ```
 
 #### `app/Models/NumeroTelephoneModel.php` — méthodes à ajouter
+
 ```php
 // Liste tous les numéros avec leur dernier solde
 public function avecSoldeActuel(): array
@@ -255,6 +276,7 @@ public function avecSoldeActuel(): array
 ```
 
 #### `app/Models/SoldeModel.php` — méthodes à ajouter
+
 ```php
 // Dernier solde d'un numéro
 public function dernierSolde(int $idNumeroTel): ?array
@@ -266,10 +288,12 @@ public function dernierSolde(int $idNumeroTel): ?array
 ```
 
 #### `app/Controllers/Admin/CompteController.php` — [NOUVEAU]
+
 - `index` : liste tous les numéros avec solde actuel
 - `show($id)` : détail d'un client → solde + historique de ses opérations
 
 #### Vues à créer
+
 - `app/Views/Admin/comptes/index.php`
 - `app/Views/Admin/comptes/show.php`
 
@@ -278,6 +302,7 @@ public function dernierSolde(int $idNumeroTel): ?array
 ## Mise à jour Sidebar Admin
 
 Dans `app/Views/layout/admin.php`, mettre à jour le menu :
+
 ```html
 <li><a href="/admin/prefixes">Préfixes</a></li>
 <li><a href="/admin/types-operation">Types d'opération</a></li>
@@ -293,11 +318,13 @@ Dans `app/Views/layout/admin.php`, mettre à jour le menu :
 ### Nouveau filtre `ClientAuthFilter`
 
 #### `app/Filters/ClientAuthFilter.php` — [NOUVEAU]
+
 ```php
 // Vérifie session()->get('numero_id') sinon redirect vers /client/login
 ```
 
 #### `app/Config/Filters.php` — ajouter dans `$aliases`
+
 ```php
 'client' => \App\Filters\ClientAuthFilter::class,
 ```
@@ -307,6 +334,7 @@ Dans `app/Views/layout/admin.php`, mettre à jour le menu :
 ### 1. Login / Création auto compte
 
 #### `Routes.php` — hors des groupes existants
+
 ```php
 $routes->get('client/login', 'Front\AuthClientController::login');
 $routes->post('client/login', 'Front\AuthClientController::login');
@@ -325,6 +353,7 @@ $routes->group('client', ['filter' => 'client'], function($routes) {
 ```
 
 #### `app/Models/NumeroTelephoneModel.php` — méthodes à ajouter
+
 ```php
 // Trouve un numéro par son numéro complet (string)
 public function findByNumero(string $numero): ?array
@@ -342,6 +371,7 @@ public function creerCompte(int $idPrefixe, string $numero): int
 ```
 
 #### `app/Models/PrefixeOperateurModel.php` — méthodes à ajouter
+
 ```php
 // Trouve un préfixe par sa valeur (ex: "034")
 public function findByPrefixe(string $prefixe): ?array
@@ -351,6 +381,7 @@ public function findByPrefixe(string $prefixe): ?array
 ```
 
 #### `app/Controllers/Front/AuthClientController.php` — [NOUVEAU]
+
 ```
 login() [GET] → affiche formulaire (1 champ : numéro de téléphone)
 
@@ -366,6 +397,7 @@ logout() → session()->remove(['numero_id','numero']) → redirect /client/logi
 ```
 
 #### Vues à créer
+
 - `app/Views/Front/auth/login.php` — layout/front, 1 input numéro de téléphone
 
 ---
@@ -373,6 +405,7 @@ logout() → session()->remove(['numero_id','numero']) → redirect /client/logi
 ### 2. Voir Solde
 
 #### `app/Controllers/Front/CompteClientController.php` — [NOUVEAU]
+
 ```php
 public function solde()
 {
@@ -386,6 +419,7 @@ public function solde()
 ```
 
 #### Vues à créer
+
 - `app/Views/Front/solde.php` — layout/front, affiche numéro + montant en grand
 
 ---
@@ -395,6 +429,7 @@ public function solde()
 #### Fonction partagée `calculerFrais` — dans `TranchesFraisModel`
 
 La signature prend maintenant **l'id du type d'opération** en paramètre :
+
 ```php
 // Déjà défini dans TranchesFraisModel (voir section 3 ci-dessus)
 public function calculerFrais(float $montant, int $idTypeOperation): float
@@ -405,6 +440,7 @@ $frais = $tranchesModel->calculerFrais($montant, $idTypeRetrait);
 ```
 
 #### `app/Models/OperationModel.php` — méthodes à ajouter
+
 ```php
 // Historique d'un numéro (envoyeur ou destinataire)
 public function historiquePourNumero(int $idNumero): array
@@ -423,6 +459,7 @@ public function historiquePourNumero(int $idNumero): array
 ```
 
 #### `app/Models/SoldeModel.php` — méthodes à ajouter
+
 ```php
 // Insère un nouveau solde = ancien solde + delta (delta peut être négatif)
 public function insertNouveauSolde(int $idNumeroTel, float $delta): void
@@ -439,8 +476,9 @@ public function insertNouveauSolde(int $idNumeroTel, float $delta): void
 
 #### `app/Controllers/Front/OperationController.php` — [NOUVEAU]
 
-**depot() [GET]** → formulaire montant  
+**depot() [GET]** → formulaire montant
 **depot() [POST]** :
+
 ```
 1. Valider montant > 0
 2. frais = 0 (dépôt)
@@ -450,8 +488,9 @@ public function insertNouveauSolde(int $idNumeroTel, float $delta): void
 6. redirect /client/solde avec success
 ```
 
-**retrait() [GET]** → formulaire montant  
+**retrait() [GET]** → formulaire montant
 **retrait() [POST]** :
+
 ```
 1. Valider montant > 0
 2. $idTypeRetrait = TypeOperationModel->where('nom','retrait')->first()['id']
@@ -465,8 +504,9 @@ public function insertNouveauSolde(int $idNumeroTel, float $delta): void
 6. Vérifier transStatus → erreur ou redirect success
 ```
 
-**transfert() [GET]** → formulaire montant + numéro destinataire  
+**transfert() [GET]** → formulaire montant + numéro destinataire
 **transfert() [POST]** :
+
 ```
 1. Valider montant > 0, numero_dest non vide
 2. Vérifier numero_dest != propre numéro
@@ -483,6 +523,7 @@ public function insertNouveauSolde(int $idNumeroTel, float $delta): void
 ```
 
 #### Vues à créer
+
 - `app/Views/Front/depot.php` — layout/front, 1 champ montant
 - `app/Views/Front/retrait.php` — layout/front, 1 champ montant + affiche frais estimés (JS optionnel)
 - `app/Views/Front/transfert.php` — layout/front, champ montant + champ numéro destinataire
@@ -492,6 +533,7 @@ public function insertNouveauSolde(int $idNumeroTel, float $delta): void
 ### 4. Historique Client
 
 #### `app/Controllers/Front/OperationController.php` — méthode à ajouter
+
 ```php
 public function historique()
 {
@@ -505,6 +547,7 @@ public function historique()
 ```
 
 #### Vues à créer
+
 - `app/Views/Front/historique.php` — tableau avec libellé dynamique :
   - `id_numero_tel == monId` ET type=transfert → "Transfert envoyé à {numero_dest}"
   - `id_numero_tel_dest == monId` → "Transfert reçu de {expediteur}"
@@ -516,6 +559,7 @@ public function historique()
 ## Mise à jour layout/front.php
 
 Ajouter les liens contextuels si session `numero_id` est active :
+
 ```html
 <?php if (session()->get('numero_id')): ?>
   <a href="/client/solde">Mon solde</a>
@@ -534,46 +578,48 @@ Ajouter les liens contextuels si session `numero_id` est active :
 ## Résumé des fichiers à créer/modifier
 
 ### Fichiers MODIFIÉS
-| Fichier | Ce qui change |
-|---|---|
-| `app/Config/Routes.php` | Groupe `admin` **sans filtre** (accès direct) + nouvelles routes admin + groupe `client` |
-| `app/Config/Filters.php` | Ajout alias `'client' => ClientAuthFilter::class` (côté admin : pas de filtre pour l'instant) |
-| `app/Models/PrefixeOperateurModel.php` | + `validationRules`, + `estUtilise()`, + `findByPrefixe()` |
-| `app/Models/TranchesFraisModel.php` | + `id_type_operation` dans `allowedFields`, + `validationRules`, + `getAllSorted()`, + `getParType()`, + `chevauchementExiste(idType,…)`, + `trouverTranche(montant, idType)`, + `calculerFrais(montant, idType)` |
-| `app/Models/NumeroTelephoneModel.php` | + `findByNumero()`, + `creerCompte()`, + `avecSoldeActuel()` |
-| `app/Models/SoldeModel.php` | + `dernierSolde()`, + `insertNouveauSolde()` |
-| `app/Models/OperationModel.php` | + `gainsParType()`, + `gainsParPeriode()`, + `historiquePourNumero()` |
-| `app/Models/TypeOperationModel.php` | + `validationRules` |
-| `app/Views/layout/admin.php` | Mise à jour sidebar avec nouveaux liens |
-| `app/Views/layout/front.php` | Menu conditionnel client |
+
+| Fichier                                  | Ce qui change                                                                                                                                                                                                                     |
+| ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `app/Config/Routes.php`                | Groupe`admin` **sans filtre** (accès direct) + nouvelles routes admin + groupe `client`                                                                                                                                |
+| `app/Config/Filters.php`               | Ajout alias`'client' => ClientAuthFilter::class` (côté admin : pas de filtre pour l'instant)                                                                                                                                  |
+| `app/Models/PrefixeOperateurModel.php` | +`validationRules`, + `estUtilise()`, + `findByPrefixe()`                                                                                                                                                                   |
+| `app/Models/TranchesFraisModel.php`    | +`id_type_operation` dans `allowedFields`, + `validationRules`, + `getAllSorted()`, + `getParType()`, + `chevauchementExiste(idType,…)`, + `trouverTranche(montant, idType)`, + `calculerFrais(montant, idType)` |
+| `app/Models/NumeroTelephoneModel.php`  | +`findByNumero()`, + `creerCompte()`, + `avecSoldeActuel()`                                                                                                                                                                 |
+| `app/Models/SoldeModel.php`            | +`dernierSolde()`, + `insertNouveauSolde()`                                                                                                                                                                                   |
+| `app/Models/OperationModel.php`        | +`gainsParType()`, + `gainsParPeriode()`, + `historiquePourNumero()`                                                                                                                                                        |
+| `app/Models/TypeOperationModel.php`    | +`validationRules`                                                                                                                                                                                                              |
+| `app/Views/layout/admin.php`           | Mise à jour sidebar avec nouveaux liens                                                                                                                                                                                          |
+| `app/Views/layout/front.php`           | Menu conditionnel client                                                                                                                                                                                                          |
 
 ### Fichiers NOUVEAUX
-| Fichier | Rôle |
-|---|---|
-| `app/Controllers/Admin/PrefixeController.php` | CRUD préfixes |
-| `app/Controllers/Admin/TypeOperationController.php` | CRUD types opération |
-| `app/Controllers/Admin/TrancheFraisController.php` | CRUD tranches frais |
-| `app/Controllers/Admin/CompteController.php` | Vue comptes clients (opérateur) |
-| `app/Controllers/Admin/RapportController.php` | Rapport gains |
-| `app/Controllers/Front/AuthClientController.php` | Login/logout client |
-| `app/Controllers/Front/CompteClientController.php` | Solde client |
-| `app/Controllers/Front/OperationController.php` | Dépôt, retrait, transfert, historique |
-| `app/Filters/ClientAuthFilter.php` | Protection routes client |
-| `app/Views/Admin/prefixes/index.php` | Liste préfixes |
-| `app/Views/Admin/prefixes/form.php` | Formulaire préfixe |
-| `app/Views/Admin/types_operation/index.php` | Liste types |
-| `app/Views/Admin/types_operation/form.php` | Formulaire type |
-| `app/Views/Admin/tranches/index.php` | Liste tranches |
-| `app/Views/Admin/tranches/form.php` | Formulaire tranche |
-| `app/Views/Admin/comptes/index.php` | Liste comptes clients |
-| `app/Views/Admin/comptes/show.php` | Détail client |
-| `app/Views/Admin/rapport/gains.php` | Rapport gains |
-| `app/Views/Front/auth/login.php` | Connexion client |
-| `app/Views/Front/solde.php` | Solde client |
-| `app/Views/Front/depot.php` | Formulaire dépôt |
-| `app/Views/Front/retrait.php` | Formulaire retrait |
-| `app/Views/Front/transfert.php` | Formulaire transfert |
-| `app/Views/Front/historique.php` | Historique client |
+
+| Fichier                                               | Rôle                                   |
+| ----------------------------------------------------- | --------------------------------------- |
+| `app/Controllers/Admin/PrefixeController.php`       | CRUD préfixes                          |
+| `app/Controllers/Admin/TypeOperationController.php` | CRUD types opération                   |
+| `app/Controllers/Admin/TrancheFraisController.php`  | CRUD tranches frais                     |
+| `app/Controllers/Admin/CompteController.php`        | Vue comptes clients (opérateur)        |
+| `app/Controllers/Admin/RapportController.php`       | Rapport gains                           |
+| `app/Controllers/Front/AuthClientController.php`    | Login/logout client                     |
+| `app/Controllers/Front/CompteClientController.php`  | Solde client                            |
+| `app/Controllers/Front/OperationController.php`     | Dépôt, retrait, transfert, historique |
+| `app/Filters/ClientAuthFilter.php`                  | Protection routes client                |
+| `app/Views/Admin/prefixes/index.php`                | Liste préfixes                         |
+| `app/Views/Admin/prefixes/form.php`                 | Formulaire préfixe                     |
+| `app/Views/Admin/types_operation/index.php`         | Liste types                             |
+| `app/Views/Admin/types_operation/form.php`          | Formulaire type                         |
+| `app/Views/Admin/tranches/index.php`                | Liste tranches                          |
+| `app/Views/Admin/tranches/form.php`                 | Formulaire tranche                      |
+| `app/Views/Admin/comptes/index.php`                 | Liste comptes clients                   |
+| `app/Views/Admin/comptes/show.php`                  | Détail client                          |
+| `app/Views/Admin/rapport/gains.php`                 | Rapport gains                           |
+| `app/Views/Front/auth/login.php`                    | Connexion client                        |
+| `app/Views/Front/solde.php`                         | Solde client                            |
+| `app/Views/Front/depot.php`                         | Formulaire dépôt                      |
+| `app/Views/Front/retrait.php`                       | Formulaire retrait                      |
+| `app/Views/Front/transfert.php`                     | Formulaire transfert                    |
+| `app/Views/Front/historique.php`                    | Historique client                       |
 
 ---
 

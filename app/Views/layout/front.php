@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><?= esc($title ?? 'Mon Site') ?></title>
   <link href="/assets/vendor/bootstrap/bootstrap.min.css" rel="stylesheet">
+  <link href="/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
   <link href="/assets/css/style.css" rel="stylesheet">
 </head>
 
@@ -16,7 +17,7 @@
       <a class="navbar-brand" href="/">Mon Site</a>
       <div class="d-flex">
         <a href="/contact" class="btn btn-outline-light btn-sm me-2">Contact</a>
-        <a href="/login" class="btn btn-outline-light btn-sm">Connexion</a>
+        <a href="/client/login" class="btn btn-outline-light btn-sm">Connexion</a>
       </div>
     </div>
   </nav>

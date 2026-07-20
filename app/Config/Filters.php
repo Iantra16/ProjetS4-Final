@@ -36,6 +36,7 @@ class Filters extends BaseFilters
         'performance'   => PerformanceMetrics::class,
         // 'auth'          => 'App\\Filters\\AuthFilter',
         'auth' => \App\Filters\AuthFilter::class,
+        'client' => \App\Filters\ClientAuthFilter::class,
     ];
 
     /**
@@ -75,7 +76,7 @@ class Filters extends BaseFilters
     public array $globals = [
         'before' => [
             // 'honeypot',
-            // 'csrf',
+            'csrf',
             // 'invalidchars',
         ],
         'after' => [

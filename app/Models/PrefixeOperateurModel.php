@@ -20,4 +20,9 @@ class PrefixeOperateurModel extends Model
             ->where('id_prefixe', $id)
             ->countAllResults() > 0;
     }
+
+    public function findByPrefixe(string $prefixe): ?array
+    {
+        return $this->where('prefixe', $prefixe)->first();
+    }
 }

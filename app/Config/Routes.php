@@ -7,11 +7,11 @@ use CodeIgniter\Router\RouteCollection;
  */
 
 $routes->get('/', 'Front\Front::index');
-$routes->get('contact', 'Front\Front::contact');
-$routes->post('contact', 'Front\Front::contactSend');
-$routes->get('login', 'Auth::login');
-$routes->post('login', 'Auth::login');
-$routes->post('logout', 'Auth::logout', ['filter' => 'auth']);
+
+$routes->get('client/login', 'Front\AuthClientController::login');
+$routes->post('client/login', 'Front\AuthClientController::login');
+$routes->post('client/logout', 'Front\AuthClientController::logout');
+
 $routes->get('unauthorized', static fn() => view('errors/unauthorized'));
 
 $routes->group('admin', function ($routes) {
@@ -25,4 +25,15 @@ $routes->group('admin', function ($routes) {
     $routes->get('prefixes/modifier/(:num)', 'Admin\PrefixeController::modifier/$1');
     $routes->post('prefixes/mettreAJour/(:num)', 'Admin\PrefixeController::mettreAJour/$1');
     $routes->get('prefixes/supprimer/(:num)', 'Admin\PrefixeController::supprimer/$1');
+});
+
+$routes->group('client', ['filter' => 'client'], function($routes) {
+    $routes->get('solde', 'Front\CompteClientController::solde');
+    $routes->get('historique', 'Front\OperationController::historique');
+    $routes->get('depot', 'Front\OperationController::depot');
+    $routes->post('depot', 'Front\OperationController::depot');
+    $routes->get('retrait', 'Front\OperationController::retrait');
+    $routes->post('retrait', 'Front\OperationController::retrait');
+    $routes->get('transfert', 'Front\OperationController::transfert');
+    $routes->post('transfert', 'Front\OperationController::transfert');
 });
