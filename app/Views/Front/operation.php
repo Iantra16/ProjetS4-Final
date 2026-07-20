@@ -49,7 +49,7 @@
             <div class="alert alert-info mb-0">
               <div><strong>Frais :</strong> <span id="affichageFrais">0</span> Ar</div>
               <div><strong>Total débité :</strong> <span id="affichageTotal">0</span> Ar</div>
-              <div id="zoneRecu" style="display:none;"><strong>Montant reçu par destinataire :</strong> <span id="affichageRecu">0</span> Ar</div>
+              <div id="zoneRecu" style="display:none;"><strong>Montant reçu par destinataire (<span id="affichageDiv">÷ 1</span>) :</strong> <span id="affichageRecu">0</span> Ar</div>
             </div>
           </div>
 
@@ -156,12 +156,13 @@ function calculerFrais() {
     let totalDebite = montantGlobal;
     if (inclureFrais) {
         totalDebite = montantGlobal + fraisTotal;
-        zoneRecu.style.display = 'none';
-    } else {
-        const montantRecuParDest = montantParTransfert - fraisParTransfert;
-        affRecu.textContent = formatMontant(montantRecuParDest > 0 ? montantRecuParDest : 0);
-        zoneRecu.style.display = 'block';
     }
+
+    // Montant que recevra chaque destinataire (montant global divisé par N)
+    const montantRecuParDest = inclureFrais ? montantParTransfert : (montantParTransfert - fraisParTransfert);
+    affRecu.textContent = formatMontant(montantRecuParDest > 0 ? montantRecuParDest : 0);
+    document.getElementById('affichageDiv').textContent = '÷ ' + nbDestinataires;
+    zoneRecu.style.display = (typeSel === 'transfert' || typeSel === 'transfert_multiple') ? 'block' : 'none';
 
     affFrais.textContent = formatMontant(fraisTotal);
     affTotal.textContent = formatMontant(totalDebite);
