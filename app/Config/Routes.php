@@ -6,7 +6,7 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 
-$routes->get('/', 'Front\Front::index');
+$routes->get('/', 'Front\AuthClientController::login');
 
 $routes->get('client/login', 'Front\AuthClientController::login');
 $routes->post('client/login', 'Front\AuthClientController::login');
@@ -15,8 +15,6 @@ $routes->post('client/logout', 'Front\AuthClientController::logout');
 $routes->get('unauthorized', static fn() => view('errors/unauthorized'));
 
 $routes->group('admin', function ($routes) {
- 
-
 
     // CRUD Tranches Frais
     $routes->get('tranches', 'Admin\TrancheFraisController::index');
@@ -56,9 +54,11 @@ $routes->group('admin', function ($routes) {
 
 $routes->group('client', ['filter' => 'client'], function($routes) {
     $routes->get('solde', 'Front\CompteClientController::solde');
+    $routes->get('depot', 'Front\OperationController::depot');
+    $routes->post('depot', 'Front\OperationController::depot');
+    $routes->get('retrait', 'Front\OperationController::retrait');
+    $routes->post('retrait', 'Front\OperationController::retrait');
+    $routes->get('transfert', 'Front\OperationController::transfert');
+    $routes->post('transfert', 'Front\OperationController::transfert');
     $routes->get('historique', 'Front\OperationController::historique');
-    $routes->get('operation', 'Front\OperationController::operation');
-    $routes->post('operation', 'Front\OperationController::enregistrer');
-    $routes->get('tranches-json', 'Front\OperationController::tranchesJson');
-    $routes->get('numero-existe-json', 'Front\OperationController::numeroExisteJson');
 });
