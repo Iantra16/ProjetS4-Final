@@ -30,6 +30,7 @@
         - id
         - id_type_operation
         - id_numero_tel
+        - id_numero_tel_dest
         - montant
         - frais
         - date
@@ -46,8 +47,12 @@ php spark serve
 4. Migrations
 - cree les migrations
 ```bash
-php spark make:migration CreateUsers
-php spark make:migration CreateProduits
+php spark make:migration CreatePrefixeOperateur
+php spark make:migration CreateNumeroTelephone
+php spark make:migration CreateSolde
+php spark make:migration CreateTypeOperation
+php spark make:migration CreateTranchesFrais
+php spark make:migration CreateOperation
 ```
 5. remplir ces fichiers 
 6. lancer la migration
