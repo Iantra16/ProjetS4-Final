@@ -31,9 +31,10 @@ class OperationModel extends Model
     public function historiquePourNumero(int $idNumero): array
     {
         return $this->db->table('operation o')
-            ->select('o.*, t.nom as type_nom, nd.numero as numero_dest')
+            ->select('o.*, t.nom as type_nom, nd.numero as numero_dest, ne.numero as numero_exp')
             ->join('type_operation t', 't.id = o.id_type_operation')
             ->join('numero_telephone nd', 'nd.id = o.id_numero_tel_dest', 'left')
+            ->join('numero_telephone ne', 'ne.id = o.id_numero_tel', 'left')
             ->groupStart()
                 ->where('o.id_numero_tel', $idNumero)
                 ->orWhere('o.id_numero_tel_dest', $idNumero)
