@@ -134,3 +134,46 @@ php spark db:seed MobileMoneySeeder
     même opérateur uniquement
 
 
+## 1. Base de données
+
+- [ ] Nouvelle migration `CreateOperateur.php` : table `operateur` (`id`, `nom`, `est_notre_operateur` BOOL, `commission_exterieur` REAL)
+- [ ] Nouvelle migration `AlterPrefixeOperateurAddOperateur.php` : `ALTER TABLE prefixe_operateur ADD COLUMN id_operateur INTEGER REFERENCES operateur(id)` — ne touchez pas à la migration V1 existante
+- [ ] Nouvelle migration `AlterOperationAddCommission.php` : `ALTER TABLE operation ADD COLUMN commission REAL NOT NULL DEFAULT 0.0`
+- [ ] Seed/migration de données — **ajout uniquement, aucune modification des lignes V1 existantes** :
+  - insérer 3 lignes `operateur` : Telma (`est_notre_operateur = 1`), Airtel (`= 0`, `commission_exterieur` à fixer), Orange (`= 0`, `commission_exterieur` à fixer)
+  - `UPDATE prefixe_operateur SET id_operateur = <id Telma> WHERE prefixe = '034'`
+  - `UPDATE prefixe_operateur SET id_operateur = <id Airtel> WHERE prefixe = '033'`
+  - `UPDATE prefixe_operateur SET id_operateur = <id Orange> WHERE prefixe = '037'`
+  - **ne pas** retoucher les lignes `operation` déjà présentes (leur `commission` reste à 0 par défaut, c'est normal, ce sont des données pré-V2)
+- [ ] Ajouter dans le seed **un nouveau compte** avec préfixe `034` (Telma) si vous n'en avez pas déjà un avec un solde suffisant, pour pouvoir tester un transfert interne → externe fraîchement créé après migration (le compte 5 existant est déjà Telma avec 200 000 Ar de solde, donc probablement pas nécessaire — à vérifier)
+- [ ] Mettre à jour `base.sql` en conséquence (ajouter les nouvelles instructions `CREATE TABLE`/`ALTER`/`INSERT`, sans supprimer ni modifier les `INSERT` déjà présents pour V1)
+- [ ] `php spark migrate` puis vérifier `projetfinal.db`
+
+## 2. Modèles
+- [ ] `Models/OperateurModel.php` (nouveau) : `allowedFields`, validation, méthode `notreOperateur()`
+- [ ] `Models/PrefixeOperateurModel.php` : ajouter `id_operateur` à `allowedFields`, méthode `estExterieur(int $idPrefixe): bool`
+- [ ] `Models/NumeroTelephoneModel.php` : méthode `operateurDuNumero(string $numero): ?array`
+- [ ] `Models/OperationModel.php` : `gainsParOperateur()` et `montantsAEnvoyerParOperateur()` (calculés **uniquement sur les opérations créées après la migration**, puisque `commission` vaut 0 par défaut sur les anciennes — ça reste correct mathématiquement, pas besoin de filtrer par date)
+
+## 3. Côté opérateur — config
+- [ ] `OperateurController` (CRUD) + vues `Admin/operateurs/index.php`, `form.php`
+- [ ] `PrefixeController` : select opérateur + filtre interne/externe
+- [ ] Routes admin : `operateurs`, `operateurs/nouveau`, `operateurs/creer`, `operateurs/modifier/(:num)`, `operateurs/mettreAJour/(:num)`, `operateurs/supprimer/(:num)`
+
+## 4. Logique de transfert
+- [ ] `OperationController::enregistrer()` bloc `transfert` : résoudre l'opérateur du destinataire, brancher interne (comportement V1 inchangé) vs externe (frais gardés + `commission` calculée et stockée)
+- [ ] Décider/documenter dans `Taches.md` le mode de calcul de `commission_exterieur` (% ou montant fixe)
+
+## 5. Rapports
+- [ ] `RapportController::gains()` scindé interne/externe
+- [ ] Nouvelle action `montantsAEnvoyer()` + vue, route `admin/rapport/montants-a-envoyer`
+
+## 6. Côté client
+- [ ] Checkbox "inclure frais de retrait", désactivé si destinataire externe
+- [ ] Formulaire envoi multiple (même opérateur uniquement), transaction globale
+
+## 7. Divers
+- [ ] `Taches.md` mis à jour à chaque étape
+- [ ] Tag `v2` + push avant 17h10
+
+Le point important par rapport à avant : votre étape "seed" devient une étape purement **additive** (`INSERT`/`UPDATE` ciblés) plutôt qu'un retraitement — ça réduit le risque de casser les tests déjà validés en V1.
