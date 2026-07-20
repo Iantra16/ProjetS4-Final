@@ -119,8 +119,8 @@ php spark db:seed MobileMoneySeeder
 1. config prefixes pour les autres operateurs
 
 2. config commission vers les autres operateurs
-- notre operateur : frais de transfert
-- autre operateur : montant a transferer + commission
+- notre operateur garde le frais de transfert
+- autre operateur recoit le montant a transferer + commission
 
 3. dans situation gain via les differents frais, separe operateur et autre operateur
 
