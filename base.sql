@@ -81,3 +81,71 @@ CREATE TABLE IF NOT EXISTS operation (
     CHECK (frais >= 0),
     CHECK (id_numero_tel_dest IS NULL OR id_numero_tel_dest != id_numero_tel)
 );
+
+
+
+
+-- ============================================================
+--  Données de test - ProjetS4 Mobile Money
+-- ============================================================
+
+INSERT INTO prefixe_operateur (prefixe, nom) VALUES
+('033', 'Airtel Money'),
+('037', 'Orange Money'),
+('034', 'Telma Mvola');
+
+INSERT INTO type_operation (nom) VALUES
+('depot'),
+('retrait'),
+('transfert');
+
+INSERT INTO tranches_frais (montant_min, montant_max, montant_frais) VALUES
+(100, 1000, 50),
+(1001, 5000, 50),
+(5001, 10000, 100),
+(10001, 25000, 200),
+(25001, 50000, 400),
+(50001, 100000, 800),
+(100001, 250000, 1500),
+(250001, 500000, 1500),
+(500001, 1000000, 2500),
+(1000001, 2000000, 3000);
+
+INSERT INTO numero_telephone (id_prefixe, numero, date_creation) VALUES
+(1, '0331234567', '2026-07-01 08:00:00'),  -- Airtel
+(1, '0339876543', '2026-07-02 09:15:00'),  -- Airtel
+(2, '0371112233', '2026-07-01 10:00:00'),  -- Orange
+(2, '0374445566', '2026-07-03 14:30:00'),  -- Orange
+(3, '0347778899', '2026-07-04 16:00:00');  -- Telma
+
+INSERT INTO solde (id_numero_tel, montant, date) VALUES
+(1, 0,       '2026-07-01 08:00:00'),   -- création compte 1
+(1, 50000,   '2026-07-05 10:00:00'),   -- après dépôt
+(2, 0,       '2026-07-02 09:15:00'),
+(2, 120000,  '2026-07-06 11:00:00'),
+(3, 0,       '2026-07-01 10:00:00'),
+(3, 30000,   '2026-07-04 15:00:00'),
+(4, 0,       '2026-07-03 14:30:00'),
+(4, 15000,   '2026-07-07 09:00:00'),
+(5, 0,       '2026-07-04 16:00:00'),
+(5, 200000,  '2026-07-08 12:00:00');
+
+-- Dépôts (frais = 0 selon ton exemple)
+INSERT INTO operation (id_type_operation, id_numero_tel, montant, frais, date) VALUES
+(1, 1, 50000, 0, '2026-07-05 10:00:00'),   -- dépôt compte 1
+(1, 2, 120000, 0, '2026-07-06 11:00:00'),  -- dépôt compte 2
+(1, 3, 30000, 0, '2026-07-04 15:00:00'),   -- dépôt compte 3
+(1, 4, 15000, 0, '2026-07-07 09:00:00'),   -- dépôt compte 4
+(1, 5, 200000, 0, '2026-07-08 12:00:00');  -- dépôt compte 5
+
+-- Retrait (compte 1 retire 5000, frais tranche 5001-10000 = 100 mais ici 5000 est dans tranche 1001-5000 = 50)
+INSERT INTO operation (id_type_operation, id_numero_tel, montant, frais, date) VALUES
+(2, 1, 5000, 50, '2026-07-09 08:30:00');
+
+-- Transfert (compte 2 envoie 10000 vers compte 4, frais tranche 5001-10000 = 100)
+INSERT INTO operation (id_type_operation, id_numero_tel, id_numero_tel_dest, montant, frais, date) VALUES
+(3, 2, 4, 10000, 100, '2026-07-09 09:00:00');
+
+-- Transfert (compte 5 envoie 25000 vers compte 3, frais tranche 10001-25000 = 200)
+INSERT INTO operation (id_type_operation, id_numero_tel, id_numero_tel_dest, montant, frais, date) VALUES
+(3, 5, 3, 25000, 200, '2026-07-09 09:30:00');
