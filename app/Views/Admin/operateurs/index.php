@@ -1,13 +1,16 @@
 <?= $this->extend('layout/admin') ?>
+
 <?= $this->section('content') ?>
-<h1>Gestion des opérateurs</h1>
-<a href="/admin/operateurs/nouveau" class="btn btn-primary">Nouvel opérateur</a>
-<table class="table">
-    <thead>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>Gestion des opérateurs</h3>
+    <a href="/admin/operateurs/nouveau" class="btn btn-primary"><i class="bi bi-plus"></i> Nouvel opérateur</a>
+</div>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
         <tr>
-            <th>ID</th>
             <th>Nom</th>
-            <th>Est notre opérateur</th>
             <th>Commission extérieur</th>
             <th>Actions</th>
         </tr>
@@ -15,16 +18,15 @@
     <tbody>
         <?php foreach ($operateurs as $op): ?>
         <tr>
-            <td><?= $op['id'] ?></td>
-            <td><?= $op['nom'] ?></td>
-            <td><?= $op['est_notre_operateur'] ? 'Oui' : 'Non' ?></td>
-            <td><?= $op['commission_exterieur'] * 100 ?>%</td>
+            <td><?= esc($op['nom']) ?></td>
+            <td><?= esc($op['commission_exterieur'] * 100) ?>%</td>
             <td>
-                <a href="/admin/operateurs/modifier/<?= $op['id'] ?>">Modifier</a>
-                <a href="/admin/operateurs/supprimer/<?= $op['id'] ?>" onclick="return confirm('Supprimer ?')">Supprimer</a>
+                <a href="/admin/operateurs/modifier/<?= $op['id'] ?>" class="btn btn-sm btn-warning">Modifier</a>
+                <a href="/admin/operateurs/supprimer/<?= $op['id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('Supprimer cet opérateur ?')">Supprimer</a>
             </td>
         </tr>
         <?php endforeach; ?>
     </tbody>
 </table>
+
 <?= $this->endSection() ?>

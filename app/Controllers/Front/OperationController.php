@@ -114,8 +114,18 @@ class OperationController extends BaseController
                 return redirect()->back()->withInput()->with('error', "Le numéro {$numeroDest} n'existe pas.");
             }
 
+            $opExpediteur = $numeroModel->operateurDuNumero(session()->get('numero'));
+            $opDestinataire = $numeroModel->operateurDuNumero($numeroDest);
+
             $frais  = $tranchesModel->calculerFrais($montant, $type['id']);
             $total  = $montant + $frais;
+            $commission = 0.0;
+
+            // Logique externe
+            if (!$opDestinataire['est_notre_operateur']) {
+                $commission = $montant * $opDestinataire['commission_exterieur'];
+            }
+
             if ($montantSolde < $total) {
                 return redirect()->back()->withInput()->with('error', "Solde insuffisant. Solde : " . number_format($montantSolde, 0, ',', ' ') . " F, total requis : " . number_format($total, 0, ',', ' ') . " F.");
             }
@@ -128,10 +138,14 @@ class OperationController extends BaseController
                 'id_numero_tel_dest' => $destinataire['id'],
                 'montant'            => $montant,
                 'frais'              => $frais,
+                'commission'         => $commission,
                 'date'               => date('Y-m-d H:i:s'),
             ]);
             $soldeModel->insererNouveauSolde($idNumero, -$total);
-            $soldeModel->insererNouveauSolde($destinataire['id'], $montant);
+            
+            // Destinataire reçoit montant + commission
+            $soldeModel->insererNouveauSolde($destinataire['id'], $montant + $commission);
+            
             $db->transComplete();
 
             if ($db->transStatus() === false) {

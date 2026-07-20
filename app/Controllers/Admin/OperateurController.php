@@ -29,8 +29,8 @@ class OperateurController extends BaseController
     {
         $this->operateurModel->save([
             'nom' => $this->request->getPost('nom'),
-            'est_notre_operateur' => $this->request->getPost('est_notre_operateur') ? 1 : 0,
-            'commission_exterieur' => $this->request->getPost('commission_exterieur') ?? 0,
+            'est_notre_operateur' => 0, // Force external operator
+            'commission_exterieur' => ($this->request->getPost('commission_exterieur') ?? 0) / 100,
         ]);
         return redirect()->to('/admin/operateurs');
     }
@@ -45,8 +45,8 @@ class OperateurController extends BaseController
     {
         $this->operateurModel->update($id, [
             'nom' => $this->request->getPost('nom'),
-            'est_notre_operateur' => $this->request->getPost('est_notre_operateur') ? 1 : 0,
-            'commission_exterieur' => $this->request->getPost('commission_exterieur') ?? 0,
+            'est_notre_operateur' => 0, // Force external operator
+            'commission_exterieur' => ($this->request->getPost('commission_exterieur') ?? 0) / 100,
         ]);
         return redirect()->to('/admin/operateurs');
     }
