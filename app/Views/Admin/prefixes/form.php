@@ -14,12 +14,6 @@
             </div>
 
             <div class="mb-3">
-                <label for="nom" class="form-label">Nom</label>
-                <input type="text" class="form-control" id="nom" name="nom"
-                       value="<?= esc(old('nom', $prefixe['nom'] ?? '')) ?>" required>
-            </div>
-
-            <div class="mb-3">
                 <label for="id_operateur" class="form-label">Opérateur</label>
                 <select class="form-control" id="id_operateur" name="id_operateur" required>
                     <?php foreach ($operateurs as $op): ?>

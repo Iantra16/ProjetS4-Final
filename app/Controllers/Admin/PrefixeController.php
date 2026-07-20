@@ -20,7 +20,6 @@ class PrefixeController extends BaseController
         if ($recherche) {
             $builder->groupStart()
                 ->like('prefixe', $recherche)
-                ->orLike('prefixe_operateur.nom', $recherche)
             ->groupEnd();
         }
         $data['prefixes'] = $builder->orderBy('prefixe_operateur.id', 'ASC')->get()->getResultArray();

@@ -7,11 +7,10 @@ use CodeIgniter\Model;
 class PrefixeOperateurModel extends Model
 {
     protected $table = 'prefixe_operateur';
-    protected $allowedFields = ['prefixe', 'nom', 'id_operateur'];
+    protected $allowedFields = ['prefixe', 'id_operateur'];
 
     protected $validationRules = [
         'prefixe' => 'required|exact_length[3]|is_natural_no_zero|is_unique[prefixe_operateur.prefixe,id,{id}]',
-        'nom'     => 'required|min_length[2]',
         'id_operateur' => 'required|is_natural_no_zero',
     ];
 

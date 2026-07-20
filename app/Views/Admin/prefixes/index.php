@@ -6,7 +6,7 @@
     <div class="card-body">
         <form method="GET" action="/admin/prefixes" class="row g-2 align-items-end">
             <div class="col-md-4">
-                <input type="text" class="form-control form-control-sm" name="q" placeholder="Rechercher par préfixe ou nom..." value="<?= esc($recherche ?? '') ?>">
+                <input type="text" class="form-control form-control-sm" name="q" placeholder="Rechercher par préfixe..." value="<?= esc($recherche ?? '') ?>">
             </div>
             <div class="col-auto">
                 <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-search"></i> Filtrer</button>
@@ -25,19 +25,17 @@
     <thead class="table-dark">
         <tr>
             <th>Préfixe</th>
-            <th>Nom</th>
             <th>Opérateur</th>
             <th>Actions</th>
         </tr>
     </thead>
     <tbody>
         <?php if (empty($prefixes)): ?>
-            <tr><td colspan="4" class="text-center">Aucun préfixe trouvé.</td></tr>
+            <tr><td colspan="3" class="text-center">Aucun préfixe trouvé.</td></tr>
         <?php else: ?>
             <?php foreach ($prefixes as $p): ?>
                 <tr>
                     <td><?= esc($p['prefixe']) ?></td>
-                    <td><?= esc($p['nom']) ?></td>
                     <td><?= esc($p['operateur_nom'] ?? 'Non défini') ?></td>
                     <td>
                         <a href="/admin/prefixes/modifier/<?= $p['id'] ?>" class="btn btn-sm btn-warning">Modifier</a>
