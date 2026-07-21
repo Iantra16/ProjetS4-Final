@@ -4,6 +4,7 @@ namespace App\Controllers\Front;
 
 use App\Controllers\BaseController;
 use App\Models\OperationModel;
+use App\Models\OperateurModel;
 use App\Models\TypeOperationModel;
 use App\Models\TranchesFraisModel;
 use App\Models\NumeroTelephoneModel;
@@ -59,6 +60,7 @@ class OperationController extends BaseController
         $tranchesModel = new TranchesFraisModel();
         $numeroModel   = new NumeroTelephoneModel();
         $operationModel = new OperationModel();
+        $operateurModel = new OperateurModel();
 
         if ($montant <= 0) {
             return redirect()->back()->withInput()->with('error', 'Le montant doit être supérieur à 0.');
@@ -153,12 +155,14 @@ class OperationController extends BaseController
                     return redirect()->back()->withInput()->with('error', "L'expéditeur et les destinataires doivent être du même opérateur.");
                 }
 
+                $promotion = $operateurModel->getPromotion();
                 $frais = $tranchesModel->calculerFrais($mont, $type['id']);
                 // "il n'y a pas de frais de retrait pour les autres opérateurs" -> Si externe, frais = 0
-                if (!$opDest['est_notre_operateur']) $frais = 0;
+                if (!$opDest['est_notre_operateur']) $frais = 0 ;
 
                 $commission = (!$opDest['est_notre_operateur']) ? ($mont * $opDest['commission_exterieur']) : 0;
-                
+                $promotion = (!$opDest['est_notre_operateur']) ? ($mont * $opDest['commission_exterieur']) : 0;
+
                 // Logique "Inclure frais"
                 if ($inclureFrais) {
                     $cout = $mont + $frais;

@@ -166,3 +166,14 @@ php spark db:seed MobileMoneySeeder
     - Fiabilisation JS : Conversion du submit handler en async propre avec preventDefault systématique et soumission programmatique pour garantir que les validations serveur/JS ne soient pas bypassées.
     - UX : Ajout d'une case à cocher dans le formulaire admin pour gérer le flag "Notre opérateur" manuellement.    
     - UX : Affichage explicite du montant divisé reçu par chaque destinataire (label "÷ N") dans le formulaire clien
+
+Alea : tag etu(4 dernier chiffre)
+1. promotion sur les frais de transfert en % (meme operateur)
+- cree dans la base 
+- frais - %promotion
+
+## 
+- ajouter une colonne promotion dans operateur [ok]
+- ajouter la colonne promotion dans les controller, models [ok]
+- dans operationController, sur la methode de transfert, ajouter la logique de promotion pour le meme operateur
++ bonus ( page de modif )

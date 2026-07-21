@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS operateur (
     id                   INTEGER PRIMARY KEY AUTOINCREMENT,
     nom                  TEXT    NOT NULL,
     est_notre_operateur  BOOLEAN NOT NULL DEFAULT 0,
-    commission_exterieur REAL    NOT NULL DEFAULT 0.0
+    commission_exterieur REAL    NOT NULL DEFAULT 0.0,
+    promotion REAL    NOT NULL DEFAULT 0.0
 );
 
 -- ------------------------------------------------------------

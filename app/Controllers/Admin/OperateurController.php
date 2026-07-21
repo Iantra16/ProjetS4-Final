@@ -32,6 +32,7 @@ class OperateurController extends BaseController
             'nom' => $this->request->getPost('nom'),
             'est_notre_operateur' => $estNotre ? 1 : 0,
             'commission_exterieur' => $estNotre ? 0.0 : ($this->request->getPost('commission_exterieur') ?? 0) / 100,
+            'promotion' => $estNotre ? 0.0 : ($this->request->getPost('promotion') ?? 0) / 100,
         ]);
         return redirect()->to('/admin/operateurs');
     }
@@ -49,6 +50,7 @@ class OperateurController extends BaseController
             'nom' => $this->request->getPost('nom'),
             'est_notre_operateur' => $estNotre ? 1 : 0,
             'commission_exterieur' => $estNotre ? 0.0 : ($this->request->getPost('commission_exterieur') ?? 0) / 100,
+            'promotion' => $estNotre ? 0.0 : ($this->request->getPost('promotion') ?? 0) / 100,
         ]);
         return redirect()->to('/admin/operateurs');
     }

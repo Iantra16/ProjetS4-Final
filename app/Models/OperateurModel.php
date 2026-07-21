@@ -8,10 +8,17 @@ class OperateurModel extends Model
 {
     protected $table = 'operateur';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['nom', 'est_notre_operateur', 'commission_exterieur'];
+    protected $allowedFields = ['nom', 'est_notre_operateur', 'commission_exterieur','promotion'];
 
     public function notreOperateur()
     {
         return $this->where('est_notre_operateur', 1)->first();
     }
+
+    public function getPromotion()
+    {
+        return $this->where('promotion')->first();
+    }
+
+
 }

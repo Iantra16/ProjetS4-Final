@@ -57,5 +57,20 @@ class TranchesFraisModel extends Model
     {
         $tranche = $this->trouverTranche($montant, $idTypeOperation);
         return $tranche ? (float) $tranche['montant_frais'] : 0.0;
+        
     }
+
+    // public function calculerMontantTotal(int $iDS, int $idDest, float $montant, float $promotion ): float
+    // {
+    //     $operateurModel = new OperateurModel();
+    //     $prefixeModel = new PrefixeOperateurModel();
+    //     $idO = $prefixeModel->g
+    //     if ($iDS == $idDest) {
+    //         $reduc = 
+    //     }
+    //     return $tranche ? (float) $tranche['montant_frais'] : 0.0;
+        
+    // }
+
+
 }

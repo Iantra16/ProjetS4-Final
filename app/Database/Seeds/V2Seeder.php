@@ -17,9 +17,9 @@ class V2Seeder extends Seeder
 
         // 1. Ajouter les opérateurs
         $this->db->table('operateur')->insertBatch([
-            ['nom' => 'Telma', 'est_notre_operateur' => 1, 'commission_exterieur' => 0.0],
-            ['nom' => 'Airtel', 'est_notre_operateur' => 0, 'commission_exterieur' => 0.02], // 2%
-            ['nom' => 'Orange', 'est_notre_operateur' => 0, 'commission_exterieur' => 0.02], // 2%
+            ['nom' => 'Telma', 'est_notre_operateur' => 1, 'commission_exterieur' => 0.0, 'promotion' => 0.02], // promotion 2%
+            ['nom' => 'Airtel', 'est_notre_operateur' => 0, 'commission_exterieur' => 0.02 , 'promotion' => 0.02], // 2% , 2%
+            ['nom' => 'Orange', 'est_notre_operateur' => 0, 'commission_exterieur' => 0.02 , 'promotion' => 0.00], // 2%
         ]);
 
         // 2. Créer/lier les prefixe_operateur avec id_operateur

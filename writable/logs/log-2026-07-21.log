@@ -25,3 +25,8 @@ in SYSTEMPATH/Cache/Handlers/FileHandler.php on line 66.
 22 SYSTEMPATH/Boot.php(403): service()
 23 SYSTEMPATH/Boot.php(163): CodeIgniter\Boot::initializeCodeIgniter()
 24 ROOTPATH/spark(87): CodeIgniter\Boot::bootSpark()
+DEBUG - 2026-07-21 06:43:26 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-21 06:43:28 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2026-07-21 06:43:31 --> CSRF token verified.
+DEBUG - 2026-07-21 06:43:31 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-21 06:43:31 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.

@@ -13,6 +13,7 @@ class CreateOperateur extends Migration
             'nom' => ['type' => 'VARCHAR', 'constraint' => '100'],
             'est_notre_operateur' => ['type' => 'BOOLEAN', 'default' => false],
             'commission_exterieur' => ['type' => 'REAL', 'default' => 0.0],
+            'promotion' => ['type' => 'REAL', 'default' => 0.0],
         ]);
         $this->forge->addKey('id', true);
         $this->forge->createTable('operateur');
