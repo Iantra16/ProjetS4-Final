@@ -11,13 +11,18 @@
         <p class="text-muted">Solde actuel : <strong><?= number_format($solde['montant'] ?? 0, 0, ',', ' ') ?> Ar</strong></p>
 
         <div class="card my-3">
-            <h3>Configuration du tqux de l'eparge</h3>
-            <form action="" method="post">
-              <div class="form">
-                <label for="number" name= "taux_epargne" ></label>
-                <input type="number" name="" id="">
-              </div>
-            </form>
+            <div class="card-body">
+                <h5 class="card-title">Configuration de l'épargne</h5>
+                <form action="/client/update-epargne" method="post">
+                    <?= csrf_field() ?>
+                    <div class="mb-3">
+                        <label for="taux_epargne" class="form-label">Taux d'épargne (%)</label>
+                        <input type="number" class="form-control" id="taux_epargne" name="taux_epargne" 
+                               min="0" max="100" step="1" value="<?= esc($senderNum['taux_epargne'] ?? 0) ?>">
+                    </div>
+                    <button type="submit" class="btn btn-sm btn-primary">Enregistrer le taux</button>
+                </form>
+            </div>
         </div>
 
         <form method="POST" action="/client/operation" id="formOperation">

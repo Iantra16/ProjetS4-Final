@@ -181,6 +181,7 @@ Alea : tag etu(4 dernier chiffre)
 
 epargne 
   interface qui dis epargne 50% pour client modifiable 
-  lors d'un trensfer ver le client qui fais de l'eparge : ex 50% d'eparge -> dans son compte epargne  et le rete vas ver son solde
+  l'user choisit le taux d'epargne a faire
+  lors d'un transfert vers  le client qui fais de l'epargne : ex 50% d'eparge -> dans son compte epargne  et le reste dans vers son solde
     
   

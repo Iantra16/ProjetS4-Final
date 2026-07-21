@@ -40,10 +40,10 @@ class SoldeepargneModel extends Model
         $modetel = new NumeroTelephoneModel();
         $client = $modetel->find($idNumeroTel);
         
-        $taux = (float)$client["eparnge"]; 
-        $montantEpargne = $montant - ($taux / 100);
+        $taux = (float)($client["taux_epargne"] ?? 0); 
+        $montantEpargne = $montant * ($taux / 100);
         $montantSolde = $montant - $montantEpargne;
-
+        
         return [
             'solde' => $montantSolde ,
             'epargne' => $montantEpargne

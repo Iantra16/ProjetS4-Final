@@ -24,12 +24,27 @@ class OperationController extends BaseController
         $data['typesJson']    = $data['types'];
 
         $senderNum = (new NumeroTelephoneModel())->find(session()->get('numero_id'));
+        $data['senderNum'] = $senderNum;
         $senderOp  = $senderNum ? (new NumeroTelephoneModel())->operateurDuNumero($senderNum['numero']) : null;
         $data['senderOperateurId'] = $senderOp ? $senderOp['id'] : null;
 
         return view('Front/operation', $data);
     }
 
+    public function updateEpargne()
+    {
+        $idNumero = session()->get('numero_id');
+        $taux     = (float) $this->request->getPost('taux_epargne');
+        
+        if ($taux < 0 || $taux > 100) {
+            return redirect()->back()->with('error', 'Le taux doit être compris entre 0 et 100.');
+        }
+
+        (new NumeroTelephoneModel())->update($idNumero, ['taux_epargne' => $taux]);
+
+        return redirect()->back()->with('success', 'Taux d\'épargne mis à jour.');
+    }
+    
     public function tranchesJson()
     {
         $idType = (int) $this->request->getGet('type_id');

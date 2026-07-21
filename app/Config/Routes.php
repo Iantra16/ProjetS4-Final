@@ -66,6 +66,7 @@ $routes->group('client', ['filter' => 'client'], function($routes) {
     $routes->get('operation', 'Front\OperationController::operation');
     $routes->post('operation', 'Front\OperationController::enregistrer');
     $routes->get('historique', 'Front\OperationController::historique');
+    $routes->post('update-epargne', 'Front\OperationController::updateEpargne');
     $routes->get('tranches-json', 'Front\OperationController::tranchesJson');
     $routes->get('numero-existe-json', 'Front\OperationController::numeroExisteJson');
     $routes->get('operateur-du-numero-json', 'Front\OperationController::operateurDuNumeroJson');
