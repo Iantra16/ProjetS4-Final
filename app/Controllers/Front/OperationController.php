@@ -8,6 +8,7 @@ use App\Models\OperateurModel;
 use App\Models\TypeOperationModel;
 use App\Models\TranchesFraisModel;
 use App\Models\NumeroTelephoneModel;
+use App\Models\SoldeepargneModel;
 use App\Models\SoldeModel;
 
 class OperationController extends BaseController
@@ -158,17 +159,7 @@ class OperationController extends BaseController
                 $promotion = $operateurModel->getPromotion();
                 $frais = $tranchesModel->calculerFrais($mont, $type['id']);
                 // "il n'y a pas de frais de retrait pour les autres opérateurs" -> Si externe, frais = 0
-<<<<<<< HEAD
                 if (!$opDest['est_notre_operateur']) $frais = 0 ;
-=======
-                if (!$opDest['est_notre_operateur']) {
-                    $frais = 0;
-                } else if ($senderOpId === $opDest['id']) {
-                    // C'est le même opérateur interne : application de la promotion
-                    $promo = (float)($opDest['promo_frais_percent'] ?? 0);
-                    $frais = $frais - ($frais * $promo / 100);
-                }
->>>>>>> main
 
                 $commission = (!$opDest['est_notre_operateur']) ? ($mont * $opDest['commission_exterieur']) : 0;
                 $promotion = (!$opDest['est_notre_operateur']) ? ($mont * $opDest['commission_exterieur']) : 0;
@@ -195,7 +186,11 @@ class OperationController extends BaseController
                 ]);
                 
                 // Destinataire reçoit montant + commission
-                $soldeModel->insererNouveauSolde($dest['id'], $montantFinalEnvoye + $commission);
+
+                $repartition = $soldeModel->repatimentmontant($dest['id'] , $montantFinalEnvoye + $commission);
+                $soldeModel->insererNouveauSolde($dest['id'], $repartition['solde']);
+                (new SoldeepargneModel())->insererNouveauSolde($dest['id'], $repartition['epargne']);
+                
             }
 
             if ($montantSolde < $montantTotal) {

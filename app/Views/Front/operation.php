@@ -10,6 +10,16 @@
 
         <p class="text-muted">Solde actuel : <strong><?= number_format($solde['montant'] ?? 0, 0, ',', ' ') ?> Ar</strong></p>
 
+        <div class="card my-3">
+            <h3>Configuration du tqux de l'eparge</h3>
+            <form action="" method="post">
+              <div class="form">
+                <label for="number" name= "taux_epargne" ></label>
+                <input type="number" name="" id="">
+              </div>
+            </form>
+        </div>
+
         <form method="POST" action="/client/operation" id="formOperation">
           <?= csrf_field() ?>
 

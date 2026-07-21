@@ -38,7 +38,7 @@ class OperateurController extends BaseController
     }
 
     public function modifier($id)
-    {
+    {   
         $data['operateur'] = $this->operateurModel->find($id);
         return view('Admin/operateurs/form', $data);
     }

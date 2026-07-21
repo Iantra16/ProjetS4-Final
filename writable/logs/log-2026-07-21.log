@@ -108,3 +108,115 @@ DEBUG - 2026-07-21 06:43:31 --> Session: Class initialized using 'CodeIgniter\Se
 DEBUG - 2026-07-21 06:43:31 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
 =======
 >>>>>>> main
+DEBUG - 2026-07-21 07:38:08 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2026-07-21 07:38:18 --> CSRF token verified.
+DEBUG - 2026-07-21 07:38:18 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-21 07:38:18 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-07-21 07:38:20 --> ParseError: syntax error, unexpected token "<<"
+[Method: GET, Route: client/operation]
+in APPPATH/Controllers/Front/OperationController.php on line 161.
+ 1 SYSTEMPATH/Autoloader/Autoloader.php(295): CodeIgniter\Autoloader\Autoloader->includeFile()
+ 2 SYSTEMPATH/Autoloader/Autoloader.php(271): CodeIgniter\Autoloader\Autoloader->loadInNamespace()
+ 3 [internal function]: CodeIgniter\Autoloader\Autoloader->loadClass()
+ 4 SYSTEMPATH/Router/Router.php(792): class_exists()
+ 5 SYSTEMPATH/Router/Router.php(230): CodeIgniter\Router\Router->processRouteAttributes()
+ 6 SYSTEMPATH/CodeIgniter.php(829): CodeIgniter\Router\Router->handle()
+ 7 SYSTEMPATH/CodeIgniter.php(441): CodeIgniter\CodeIgniter->tryToRouteIt()
+ 8 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+ 9 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+11 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+12 SYSTEMPATH/rewrite.php(44): require_once('/home/iantra/Documents/My_Docs/S4/SI/ProjetS4-Final/public/index.php')
+DEBUG - 2026-07-21 07:40:07 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-07-21 07:40:07 --> ParseError: syntax error, unexpected token "<<", expecting "function"
+[Method: GET, Route: client/operation]
+in APPPATH/Models/OperateurModel.php on line 11.
+ 1 SYSTEMPATH/Autoloader/Autoloader.php(295): CodeIgniter\Autoloader\Autoloader->includeFile()
+ 2 SYSTEMPATH/Autoloader/Autoloader.php(271): CodeIgniter\Autoloader\Autoloader->loadInNamespace()
+ 3 APPPATH/Models/NumeroTelephoneModel.php(45): CodeIgniter\Autoloader\Autoloader->loadClass()
+ 4 APPPATH/Controllers/Front/OperationController.php(26): App\Models\NumeroTelephoneModel->operateurDuNumero()
+ 5 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Front\OperationController->operation()
+ 6 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+ 7 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+ 8 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+10 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+11 SYSTEMPATH/rewrite.php(44): require_once('/home/iantra/Documents/My_Docs/S4/SI/ProjetS4-Final/public/index.php')
+DEBUG - 2026-07-21 07:40:08 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-07-21 07:40:08 --> ParseError: syntax error, unexpected token "<<", expecting "function"
+[Method: GET, Route: client/operation]
+in APPPATH/Models/OperateurModel.php on line 11.
+ 1 SYSTEMPATH/Autoloader/Autoloader.php(295): CodeIgniter\Autoloader\Autoloader->includeFile()
+ 2 SYSTEMPATH/Autoloader/Autoloader.php(271): CodeIgniter\Autoloader\Autoloader->loadInNamespace()
+ 3 APPPATH/Models/NumeroTelephoneModel.php(45): CodeIgniter\Autoloader\Autoloader->loadClass()
+ 4 APPPATH/Controllers/Front/OperationController.php(26): App\Models\NumeroTelephoneModel->operateurDuNumero()
+ 5 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Front\OperationController->operation()
+ 6 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+ 7 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+ 8 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+10 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+11 SYSTEMPATH/rewrite.php(44): require_once('/home/iantra/Documents/My_Docs/S4/SI/ProjetS4-Final/public/index.php')
+DEBUG - 2026-07-21 07:40:09 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-07-21 07:40:09 --> ParseError: syntax error, unexpected token "<<", expecting "function"
+[Method: GET, Route: client/operation]
+in APPPATH/Models/OperateurModel.php on line 11.
+ 1 SYSTEMPATH/Autoloader/Autoloader.php(295): CodeIgniter\Autoloader\Autoloader->includeFile()
+ 2 SYSTEMPATH/Autoloader/Autoloader.php(271): CodeIgniter\Autoloader\Autoloader->loadInNamespace()
+ 3 APPPATH/Models/NumeroTelephoneModel.php(45): CodeIgniter\Autoloader\Autoloader->loadClass()
+ 4 APPPATH/Controllers/Front/OperationController.php(26): App\Models\NumeroTelephoneModel->operateurDuNumero()
+ 5 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Front\OperationController->operation()
+ 6 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+ 7 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+ 8 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+10 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+11 SYSTEMPATH/rewrite.php(44): require_once('/home/iantra/Documents/My_Docs/S4/SI/ProjetS4-Final/public/index.php')
+DEBUG - 2026-07-21 07:40:09 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-07-21 07:40:09 --> ParseError: syntax error, unexpected token "<<", expecting "function"
+[Method: GET, Route: client/operation]
+in APPPATH/Models/OperateurModel.php on line 11.
+ 1 SYSTEMPATH/Autoloader/Autoloader.php(295): CodeIgniter\Autoloader\Autoloader->includeFile()
+ 2 SYSTEMPATH/Autoloader/Autoloader.php(271): CodeIgniter\Autoloader\Autoloader->loadInNamespace()
+ 3 APPPATH/Models/NumeroTelephoneModel.php(45): CodeIgniter\Autoloader\Autoloader->loadClass()
+ 4 APPPATH/Controllers/Front/OperationController.php(26): App\Models\NumeroTelephoneModel->operateurDuNumero()
+ 5 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Front\OperationController->operation()
+ 6 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+ 7 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+ 8 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+10 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+11 SYSTEMPATH/rewrite.php(44): require_once('/home/iantra/Documents/My_Docs/S4/SI/ProjetS4-Final/public/index.php')
+DEBUG - 2026-07-21 07:40:09 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-07-21 07:40:09 --> ParseError: syntax error, unexpected token "<<", expecting "function"
+[Method: GET, Route: client/operation]
+in APPPATH/Models/OperateurModel.php on line 11.
+ 1 SYSTEMPATH/Autoloader/Autoloader.php(295): CodeIgniter\Autoloader\Autoloader->includeFile()
+ 2 SYSTEMPATH/Autoloader/Autoloader.php(271): CodeIgniter\Autoloader\Autoloader->loadInNamespace()
+ 3 APPPATH/Models/NumeroTelephoneModel.php(45): CodeIgniter\Autoloader\Autoloader->loadClass()
+ 4 APPPATH/Controllers/Front/OperationController.php(26): App\Models\NumeroTelephoneModel->operateurDuNumero()
+ 5 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Front\OperationController->operation()
+ 6 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+ 7 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+ 8 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+10 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+11 SYSTEMPATH/rewrite.php(44): require_once('/home/iantra/Documents/My_Docs/S4/SI/ProjetS4-Final/public/index.php')
+DEBUG - 2026-07-21 07:40:09 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-07-21 07:40:09 --> ParseError: syntax error, unexpected token "<<", expecting "function"
+[Method: GET, Route: client/operation]
+in APPPATH/Models/OperateurModel.php on line 11.
+ 1 SYSTEMPATH/Autoloader/Autoloader.php(295): CodeIgniter\Autoloader\Autoloader->includeFile()
+ 2 SYSTEMPATH/Autoloader/Autoloader.php(271): CodeIgniter\Autoloader\Autoloader->loadInNamespace()
+ 3 APPPATH/Models/NumeroTelephoneModel.php(45): CodeIgniter\Autoloader\Autoloader->loadClass()
+ 4 APPPATH/Controllers/Front/OperationController.php(26): App\Models\NumeroTelephoneModel->operateurDuNumero()
+ 5 SYSTEMPATH/CodeIgniter.php(951): App\Controllers\Front\OperationController->operation()
+ 6 SYSTEMPATH/CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController()
+ 7 SYSTEMPATH/CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest()
+ 8 SYSTEMPATH/Boot.php(417): CodeIgniter\CodeIgniter->run()
+ 9 SYSTEMPATH/Boot.php(68): CodeIgniter\Boot::runCodeIgniter()
+10 FCPATH/index.php(59): CodeIgniter\Boot::bootWeb()
+11 SYSTEMPATH/rewrite.php(44): require_once('/home/iantra/Documents/My_Docs/S4/SI/ProjetS4-Final/public/index.php')
+DEBUG - 2026-07-21 08:18:32 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-21 08:18:32 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-21 08:18:34 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.

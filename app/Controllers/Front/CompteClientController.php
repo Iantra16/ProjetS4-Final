@@ -3,6 +3,7 @@
 namespace App\Controllers\Front;
 
 use App\Controllers\BaseController;
+use App\Models\NumeroTelephoneModel;
 use App\Models\SoldeModel;
 
 class CompteClientController extends BaseController
@@ -19,5 +20,17 @@ class CompteClientController extends BaseController
         $data['title']     = 'Mon solde';
 
         return view('Front/solde', $data);
+    }
+    
+    public function mettreAJour($id)
+    {
+        $estNotre = $this->request->getPost('est_notre_operateur') === '1';
+        $this->operateurModel->update($id, [
+            'nom' => $this->request->getPost('nom'),
+            'est_notre_operateur' => $estNotre ? 1 : 0,
+            'commission_exterieur' => $estNotre ? 0.0 : ($this->request->getPost('commission_exterieur') ?? 0) / 100,
+            'promotion' => $estNotre ? 0.0 : ($this->request->getPost('promotion') ?? 0) / 100,
+        ]);
+        return redirect()->to('/admin/operateurs');
     }
 }

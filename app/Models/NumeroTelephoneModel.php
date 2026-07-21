@@ -7,7 +7,7 @@ use CodeIgniter\Model;
 class NumeroTelephoneModel extends Model
 {
     protected $table         = 'numero_telephone';
-    protected $allowedFields = ['id_prefixe', 'numero', 'date_creation'];
+    protected $allowedFields = ['id_prefixe', 'numero', 'date_creation' , 'eparnge'];
 
     public function trouverParNumero(string $numero): ?array
     {

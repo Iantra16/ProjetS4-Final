@@ -4,9 +4,9 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class SoldeModel extends Model
+class SoldeepargneModel extends Model
 {
-    protected $table = 'solde';
+    protected $table = 'solde_eparnge';
     protected $allowedFields = ['id_numero_tel', 'montant', 'date'];
 
     public function dernierSolde(int $idNumeroTel): ?array
@@ -48,7 +48,6 @@ class SoldeModel extends Model
             'solde' => $montantSolde ,
             'epargne' => $montantEpargne
         ];
-
     }
 
 }

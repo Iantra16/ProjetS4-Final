@@ -177,3 +177,10 @@ Alea : tag etu(4 dernier chiffre)
 - ajouter la colonne promotion dans les controller, models [ok]
 - dans operationController, sur la methode de transfert, ajouter la logique de promotion pour le meme operateur
 + bonus ( page de modif )
+
+
+epargne 
+  interface qui dis epargne 50% pour client modifiable 
+  lors d'un trensfer ver le client qui fais de l'eparge : ex 50% d'eparge -> dans son compte epargne  et le rete vas ver son solde
+    
+  
