@@ -152,3 +152,17 @@ php spark db:seed MobileMoneySeeder
 
 2. envoi multiple vers plusieurs numéros ( divisé le montant pour chaque numéro)
    + même opérateur uniquement
+
+##### Corrections et Améliorations transversales
+- BDD / Seeders
+    - Fix MobileMoneySeeder : Retrait de la colonne nom obsolète dans prefixe_operateur et ajout de DELETE FROM sqlite_sequence (reset autoincrement) pour éviter les erreurs de clés étrangères (FK) lors des réinitialisations.
+    - Fix V2Seeder : Implémentation du mapping id_operateur dynamique pour lier correctement les préfixes aux opérateurs, et reset de séquence pour éviter le drift des IDs.
+- Fixes de bugs
+    - Fatal Error : Correction de l'erreur Array to string conversion dans OperationController.php (variable dead code supprimée).
+    - Bug JS Calcul : Refonte de calculerFrais() pour éviter de détruire les éléments DOM (spans) lors du rendu, supprimant les affichages erronés.
+    - Bug Admin : Correction du contrôleur OperateurController qui forçait est_notre_operateur = 0 lors de chaque modification, rendant les opérateurs internes "externe" par erreur.
+    - Permission : Fix de l'erreur Cache unable to write par recréation et mise à jour des droits sur writable/cache/.
+- Améliorations
+    - Fiabilisation JS : Conversion du submit handler en async propre avec preventDefault systématique et soumission programmatique pour garantir que les validations serveur/JS ne soient pas bypassées.
+    - UX : Ajout d'une case à cocher dans le formulaire admin pour gérer le flag "Notre opérateur" manuellement.    
+    - UX : Affichage explicite du montant divisé reçu par chaque destinataire (label "÷ N") dans le formulaire clien
