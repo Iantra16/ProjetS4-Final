@@ -155,7 +155,13 @@ class OperationController extends BaseController
 
                 $frais = $tranchesModel->calculerFrais($mont, $type['id']);
                 // "il n'y a pas de frais de retrait pour les autres opérateurs" -> Si externe, frais = 0
-                if (!$opDest['est_notre_operateur']) $frais = 0;
+                if (!$opDest['est_notre_operateur']) {
+                    $frais = 0;
+                } else if ($senderOpId === $opDest['id']) {
+                    // C'est le même opérateur interne : application de la promotion
+                    $promo = (float)($opDest['promo_frais_percent'] ?? 0);
+                    $frais = $frais - ($frais * $promo / 100);
+                }
 
                 $commission = (!$opDest['est_notre_operateur']) ? ($mont * $opDest['commission_exterieur']) : 0;
                 

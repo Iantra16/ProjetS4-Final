@@ -1,0 +1,102 @@
+CRITICAL - 2026-07-21 04:57:16 --> CodeIgniter\Cache\Exceptions\CacheException: Cache unable to write to "/opt/lampp/htdocs/MY_htdocs/S4/System D'informatoin/ProjetS4-Final/writable/cache/".
+[Method: GET, Route: /]
+in SYSTEMPATH/Cache/Handlers/FileHandler.php on line 66.
+ 1 SYSTEMPATH/Cache/Handlers/FileHandler.php(66): CodeIgniter\Cache\Exceptions\CacheException::forUnableToWrite()
+ 2 SYSTEMPATH/Cache/CacheFactory.php(67): CodeIgniter\Cache\Handlers\FileHandler->__construct()
+ 3 SYSTEMPATH/Config/Services.php(129): CodeIgniter\Cache\CacheFactory::getHandler()
+ 4 SYSTEMPATH/Config/BaseService.php(325): CodeIgniter\Config\Services::cache()
+ 5 SYSTEMPATH/Config/BaseService.php(264): CodeIgniter\Config\BaseService::__callStatic()
+ 6 SYSTEMPATH/Config/Services.php(124): CodeIgniter\Config\BaseService::getSharedInstance()
+ 7 SYSTEMPATH/Config/BaseService.php(334): CodeIgniter\Config\Services::cache()
+ 8 SYSTEMPATH/Config/BaseService.php(203): CodeIgniter\Config\BaseService::__callStatic()
+ 9 SYSTEMPATH/Config/Services.php(454): CodeIgniter\Config\BaseService::get()
+10 SYSTEMPATH/Config/BaseService.php(325): CodeIgniter\Config\Services::responsecache()
+11 SYSTEMPATH/Config/BaseService.php(264): CodeIgniter\Config\BaseService::__callStatic()
+12 SYSTEMPATH/Config/Services.php(450): CodeIgniter\Config\BaseService::getSharedInstance()
+13 SYSTEMPATH/Config/BaseService.php(334): CodeIgniter\Config\Services::responsecache()
+14 SYSTEMPATH/CodeIgniter.php(178): CodeIgniter\Config\BaseService::__callStatic()
+15 SYSTEMPATH/Config/Services.php(164): CodeIgniter\CodeIgniter->__construct()
+16 SYSTEMPATH/Config/BaseService.php(325): CodeIgniter\Config\Services::codeigniter()
+17 SYSTEMPATH/Config/BaseService.php(264): CodeIgniter\Config\BaseService::__callStatic()
+18 SYSTEMPATH/Config/Services.php(159): CodeIgniter\Config\BaseService::getSharedInstance()
+19 SYSTEMPATH/Config/BaseService.php(334): CodeIgniter\Config\Services::codeigniter()
+20 SYSTEMPATH/Config/BaseService.php(203): CodeIgniter\Config\BaseService::__callStatic()
+21 SYSTEMPATH/Common.php(1078): CodeIgniter\Config\BaseService::get()
+22 SYSTEMPATH/Boot.php(403): service()
+23 SYSTEMPATH/Boot.php(163): CodeIgniter\Boot::initializeCodeIgniter()
+24 ROOTPATH/spark(87): CodeIgniter\Boot::bootSpark()
+CRITICAL - 2026-07-21 05:00:18 --> CodeIgniter\Cache\Exceptions\CacheException: Cache unable to write to "/opt/lampp/htdocs/MY_htdocs/S4/System D'informatoin/ProjetS4-Final/writable/cache/".
+[Method: GET, Route: /]
+in SYSTEMPATH/Cache/Handlers/FileHandler.php on line 66.
+ 1 SYSTEMPATH/Cache/Handlers/FileHandler.php(66): CodeIgniter\Cache\Exceptions\CacheException::forUnableToWrite()
+ 2 SYSTEMPATH/Cache/CacheFactory.php(67): CodeIgniter\Cache\Handlers\FileHandler->__construct()
+ 3 SYSTEMPATH/Config/Services.php(129): CodeIgniter\Cache\CacheFactory::getHandler()
+ 4 SYSTEMPATH/Config/BaseService.php(325): CodeIgniter\Config\Services::cache()
+ 5 SYSTEMPATH/Config/BaseService.php(264): CodeIgniter\Config\BaseService::__callStatic()
+ 6 SYSTEMPATH/Config/Services.php(124): CodeIgniter\Config\BaseService::getSharedInstance()
+ 7 SYSTEMPATH/Config/BaseService.php(334): CodeIgniter\Config\Services::cache()
+ 8 SYSTEMPATH/Config/BaseService.php(203): CodeIgniter\Config\BaseService::__callStatic()
+ 9 SYSTEMPATH/Config/Services.php(454): CodeIgniter\Config\BaseService::get()
+10 SYSTEMPATH/Config/BaseService.php(325): CodeIgniter\Config\Services::responsecache()
+11 SYSTEMPATH/Config/BaseService.php(264): CodeIgniter\Config\BaseService::__callStatic()
+12 SYSTEMPATH/Config/Services.php(450): CodeIgniter\Config\BaseService::getSharedInstance()
+13 SYSTEMPATH/Config/BaseService.php(334): CodeIgniter\Config\Services::responsecache()
+14 SYSTEMPATH/CodeIgniter.php(178): CodeIgniter\Config\BaseService::__callStatic()
+15 SYSTEMPATH/Config/Services.php(164): CodeIgniter\CodeIgniter->__construct()
+16 SYSTEMPATH/Config/BaseService.php(325): CodeIgniter\Config\Services::codeigniter()
+17 SYSTEMPATH/Config/BaseService.php(264): CodeIgniter\Config\BaseService::__callStatic()
+18 SYSTEMPATH/Config/Services.php(159): CodeIgniter\Config\BaseService::getSharedInstance()
+19 SYSTEMPATH/Config/BaseService.php(334): CodeIgniter\Config\Services::codeigniter()
+20 SYSTEMPATH/Config/BaseService.php(203): CodeIgniter\Config\BaseService::__callStatic()
+21 SYSTEMPATH/Common.php(1078): CodeIgniter\Config\BaseService::get()
+22 SYSTEMPATH/Boot.php(403): service()
+23 SYSTEMPATH/Boot.php(163): CodeIgniter\Boot::initializeCodeIgniter()
+24 ROOTPATH/spark(87): CodeIgniter\Boot::bootSpark()
+DEBUG - 2026-07-21 05:03:17 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2026-07-21 05:03:36 --> CSRF token verified.
+DEBUG - 2026-07-21 05:03:36 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-21 05:03:37 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-21 05:03:42 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-21 05:03:46 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+INFO - 2026-07-21 05:06:27 --> CSRF token verified.
+DEBUG - 2026-07-21 05:06:27 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-21 05:06:27 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-21 05:06:28 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-21 05:06:35 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-21 05:06:41 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-21 05:06:44 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-21 05:06:45 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-21 05:06:47 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-21 05:06:57 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-21 05:08:27 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-21 05:11:26 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-21 05:12:01 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-21 05:12:03 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+DEBUG - 2026-07-21 05:12:05 --> Session: Class initialized using 'CodeIgniter\Session\Handlers\FileHandler' driver.
+CRITICAL - 2026-07-21 07:32:35 --> CodeIgniter\Cache\Exceptions\CacheException: Cache unable to write to "/opt/lampp/htdocs/MY_htdocs/S4/System D'informatoin/ProjetS4-Final/writable/cache/".
+[Method: GET, Route: /]
+in SYSTEMPATH/Cache/Handlers/FileHandler.php on line 66.
+ 1 SYSTEMPATH/Cache/Handlers/FileHandler.php(66): CodeIgniter\Cache\Exceptions\CacheException::forUnableToWrite()
+ 2 SYSTEMPATH/Cache/CacheFactory.php(67): CodeIgniter\Cache\Handlers\FileHandler->__construct()
+ 3 SYSTEMPATH/Config/Services.php(129): CodeIgniter\Cache\CacheFactory::getHandler()
+ 4 SYSTEMPATH/Config/BaseService.php(325): CodeIgniter\Config\Services::cache()
+ 5 SYSTEMPATH/Config/BaseService.php(264): CodeIgniter\Config\BaseService::__callStatic()
+ 6 SYSTEMPATH/Config/Services.php(124): CodeIgniter\Config\BaseService::getSharedInstance()
+ 7 SYSTEMPATH/Config/BaseService.php(334): CodeIgniter\Config\Services::cache()
+ 8 SYSTEMPATH/Config/BaseService.php(203): CodeIgniter\Config\BaseService::__callStatic()
+ 9 SYSTEMPATH/Config/Services.php(454): CodeIgniter\Config\BaseService::get()
+10 SYSTEMPATH/Config/BaseService.php(325): CodeIgniter\Config\Services::responsecache()
+11 SYSTEMPATH/Config/BaseService.php(264): CodeIgniter\Config\BaseService::__callStatic()
+12 SYSTEMPATH/Config/Services.php(450): CodeIgniter\Config\BaseService::getSharedInstance()
+13 SYSTEMPATH/Config/BaseService.php(334): CodeIgniter\Config\Services::responsecache()
+14 SYSTEMPATH/CodeIgniter.php(178): CodeIgniter\Config\BaseService::__callStatic()
+15 SYSTEMPATH/Config/Services.php(164): CodeIgniter\CodeIgniter->__construct()
+16 SYSTEMPATH/Config/BaseService.php(325): CodeIgniter\Config\Services::codeigniter()
+17 SYSTEMPATH/Config/BaseService.php(264): CodeIgniter\Config\BaseService::__callStatic()
+18 SYSTEMPATH/Config/Services.php(159): CodeIgniter\Config\BaseService::getSharedInstance()
+19 SYSTEMPATH/Config/BaseService.php(334): CodeIgniter\Config\Services::codeigniter()
+20 SYSTEMPATH/Config/BaseService.php(203): CodeIgniter\Config\BaseService::__callStatic()
+21 SYSTEMPATH/Common.php(1078): CodeIgniter\Config\BaseService::get()
+22 SYSTEMPATH/Boot.php(403): service()
+23 SYSTEMPATH/Boot.php(163): CodeIgniter\Boot::initializeCodeIgniter()
+24 ROOTPATH/spark(87): CodeIgniter\Boot::bootSpark()

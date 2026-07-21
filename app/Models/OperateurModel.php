@@ -8,7 +8,7 @@ class OperateurModel extends Model
 {
     protected $table = 'operateur';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['nom', 'est_notre_operateur', 'commission_exterieur'];
+    protected $allowedFields = ['nom', 'est_notre_operateur', 'commission_exterieur', 'promo_frais_percent'];
 
     public function notreOperateur()
     {
