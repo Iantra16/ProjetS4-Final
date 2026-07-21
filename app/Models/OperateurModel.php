@@ -15,9 +15,12 @@ class OperateurModel extends Model
         return $this->where('est_notre_operateur', 1)->first();
     }
 
-    public function getPromotion()
+    public static function getPromoPercent($id)
     {
-        return $this->where('promotion')->first();
+        $db = \Config\Database::connect();
+        $builder = $db->table('operateur');
+        $operateur = $builder->where('id', $id)->get()->getRowArray();
+        return $operateur ? (float) $operateur['promo_frais_percent'] : 0.0;
     }
 
 

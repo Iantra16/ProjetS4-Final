@@ -156,13 +156,16 @@ class OperationController extends BaseController
                     return redirect()->back()->withInput()->with('error', "L'expéditeur et les destinataires doivent être du même opérateur.");
                 }
 
-                $promotion = $operateurModel->getPromotion();
+                $promoPercent = $operateurModel->getPromoPercent($opDest['id']);
                 $frais = $tranchesModel->calculerFrais($mont, $type['id']);
-                // "il n'y a pas de frais de retrait pour les autres opérateurs" -> Si externe, frais = 0
-                if (!$opDest['est_notre_operateur']) $frais = 0 ;
 
-                $commission = (!$opDest['est_notre_operateur']) ? ($mont * $opDest['commission_exterieur']) : 0;
-                $promotion = (!$opDest['est_notre_operateur']) ? ($mont * $opDest['commission_exterieur']) : 0;
+                if ($opDest['est_notre_operateur']) {
+                    $frais = $frais - ($frais * $promoPercent / 100);
+                    $commission = 0;
+                } else {
+                    $frais = 0;
+                    $commission = $mont * $opDest['commission_exterieur'];
+                }
 
                 // Logique "Inclure frais"
                 if ($inclureFrais) {

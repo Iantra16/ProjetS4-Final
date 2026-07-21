@@ -57,6 +57,9 @@
 
           <div class="mb-3" id="zoneFrais" style="display:none;">
             <div class="alert alert-info mb-0">
+              <div id="promoNotice" style="display:none; color: green; font-weight: bold; margin-bottom: 5px;">
+                Promotion : <span id="promoVal">0</span>% de réduction sur les frais !
+              </div>
               <div><strong>Frais :</strong> <span id="affichageFrais">0</span> Ar</div>
               <div><strong>Total débité :</strong> <span id="affichageTotal">0</span> Ar</div>
               <div id="zoneRecu" style="display:none;"><strong>Montant reçu par destinataire (<span id="affichageDiv">÷ 1</span>) :</strong> <span id="affichageRecu">0</span> Ar</div>
@@ -160,21 +163,33 @@ function calculerFrais() {
     const tranche = tranchesCache[typeObj.id].find(t => montantParTransfert >= t.montant_min && montantParTransfert <= t.montant_max);
     const fraisParTransfert = tranche ? parseFloat(tranche.montant_frais) : 0;
     const fraisTotal = fraisParTransfert * nbDestinataires;
+    const promoPercent = <?= json_encode($senderOperateurId ? \App\Models\OperateurModel::getPromoPercent($senderOperateurId) : 0) ?>;
+    
+    // Affichage de la promo
+    const promoNotice = document.getElementById('promoNotice');
+    if (promoPercent > 0) {
+        document.getElementById('promoVal').textContent = promoPercent;
+        promoNotice.style.display = 'block';
+    } else {
+        promoNotice.style.display = 'none';
+    }
+
+    const fraisTotalPromo = fraisTotal - (fraisTotal * promoPercent / 100);
 
     const inclureFrais = document.getElementById('inclure_frais').checked;
 
     let totalDebite = montantGlobal;
     if (inclureFrais) {
-        totalDebite = montantGlobal + fraisTotal;
+        totalDebite = montantGlobal + fraisTotalPromo;
     }
 
     // Montant que recevra chaque destinataire (montant global divisé par N)
-    const montantRecuParDest = inclureFrais ? montantParTransfert : (montantParTransfert - fraisParTransfert);
+    const montantRecuParDest = inclureFrais ? montantParTransfert : (montantParTransfert - (fraisTotalPromo/nbDestinataires));
     affRecu.textContent = formatMontant(montantRecuParDest > 0 ? montantRecuParDest : 0);
     document.getElementById('affichageDiv').textContent = '÷ ' + nbDestinataires;
     zoneRecu.style.display = (typeSel === 'transfert' || typeSel === 'transfert_multiple') ? 'block' : 'none';
 
-    affFrais.textContent = formatMontant(fraisTotal);
+    affFrais.textContent = formatMontant(fraisTotalPromo);
     affTotal.textContent = formatMontant(totalDebite);
 }
 
